@@ -1,11 +1,11 @@
 #server.address=192.168.1.144
 server:
-  port: 8091
+  port: 8090
 spring:
-  application.name: user-service
+  application.name: room-service
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: kafka:9092
 #    producer:
 #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
 #      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
@@ -14,5 +14,5 @@ spring:
 #      value-deserializer: app.groopy.userservice.infrastructure.kafka.UserServiceServiceKafkaDeserializer
 
 elasticsearch:
-  host: localhost
+  host: elasticsearch
   port: 9200
