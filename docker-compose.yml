@@ -10,6 +10,8 @@ services:
       - "8091:8091"
     expose:
       - '8091'
+    networks:
+      - infrastructure
 
   kafka:
     image: confluentinc/cp-kafka:6.1.1
@@ -19,6 +21,8 @@ services:
       - '9092:9092'
     expose:
       - '9092'
+    networks:
+      - infrastructure
     environment:
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
@@ -48,6 +52,8 @@ services:
       - 9200:9200
     expose:
       - 9200
+    networks:
+      - infrastructure
     healthcheck:
       test: curl -u elastic:elastic -s -f elasticsearch:9200/_cat/health >/dev/null || exit 1
       interval: 30s
@@ -60,6 +66,8 @@ services:
       - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
+    networks:
+      - infrastructure
 
   #  cache:
   #    image: redis:6.2-alpine
@@ -69,6 +77,10 @@ services:
   #    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
   #    volumes:
   #      - cache:/data
+
+networks:
+  infrastructure:
+    driver: bridge
 
 volumes:
   #  cache:
