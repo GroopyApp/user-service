@@ -1,7 +1,6 @@
 package app.groopy.userservice.presentation;
 
 import app.groopy.protobuf.UserServiceProto;
-import app.groopy.userservice.application.SignInService;
 import app.groopy.userservice.application.SignUpService;
 import app.groopy.userservice.application.UserDetailsService;
 import app.groopy.userservice.presentation.mapper.PresentationMapper;
@@ -18,8 +17,6 @@ public class UserServiceController {
     private final Logger LOGGER = LoggerFactory.getLogger(UserServiceController.class);
 
     @Autowired
-    private SignInService signInService;
-    @Autowired
     private SignUpService signUpService;
     @Autowired
     private UserDetailsService userDetailsService;
@@ -30,21 +27,10 @@ public class UserServiceController {
     @PostMapping(value = "/signUp",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserServiceProto.SignUpResponse> createRoom(@RequestBody UserServiceProto.SignUpRequest payload) {
+    public ResponseEntity<UserServiceProto.SignUpResponse> signUp(@RequestBody UserServiceProto.SignUpRequest payload) {
         LOGGER.info("Processing message {}", payload);
         UserServiceProto.SignUpResponse response = presentationMapper.map(
                 signUpService.register(presentationMapper.map(payload))
-        );
-        return ResponseEntity.ok(response);
-    }
-
-    @PostMapping(value = "/signIn",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserServiceProto.SignInResponse> createRoom(@RequestBody UserServiceProto.SignInRequest payload) {
-        LOGGER.info("Processing message {}", payload);
-        UserServiceProto.SignInResponse response = presentationMapper.map(
-                signInService.login(presentationMapper.map(payload))
         );
         return ResponseEntity.ok(response);
     }
@@ -57,4 +43,9 @@ public class UserServiceController {
         UserServiceProto.UserDetailsResponse response = presentationMapper.map(userDetailsService.getUser(userId));
         return ResponseEntity.ok(response);
     }
-}
+
+    @GetMapping(value = "dev/deleteAll", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity deleteAllUsers() {
+        signUpService.deleteAllUsers();
+        return ResponseEntity.ok().build();
+    }}

@@ -1,7 +1,7 @@
 package app.groopy.userservice.application.mapper;
 
 import app.groopy.userservice.domain.models.common.UserDetails;
-import app.groopy.userservice.infrastructure.elasticsearch.repository.models.entities.ESUserEntity;
+import app.groopy.userservice.infrastructure.repository.models.ESUserEntity;
 import org.mapstruct.CollectionMappingStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

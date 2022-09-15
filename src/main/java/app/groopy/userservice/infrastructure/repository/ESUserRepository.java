@@ -1,6 +1,6 @@
-package app.groopy.userservice.infrastructure.elasticsearch.repository;
+package app.groopy.userservice.infrastructure.repository;
 
-import app.groopy.userservice.infrastructure.elasticsearch.repository.models.entities.ESUserEntity;
+import app.groopy.userservice.infrastructure.repository.models.ESUserEntity;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 

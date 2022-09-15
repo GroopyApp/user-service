@@ -32,8 +32,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer() {
         JsonFormat.TypeRegistry typeRegistry = JsonFormat.TypeRegistry.newBuilder()
-                .add(UserServiceProto.SignInRequest.getDescriptor())
-                .add(UserServiceProto.SignInResponse.getDescriptor())
                 .add(UserServiceProto.SignUpRequest.getDescriptor())
                 .add(UserServiceProto.SignUpResponse.getDescriptor())
                 .add(UserServiceProto.UserDetailsResponse.getDescriptor())
