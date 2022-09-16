@@ -10,7 +10,6 @@ import app.groopy.userservice.infrastructure.repository.models.FirebaseSignUpReq
 import app.groopy.userservice.infrastructure.repository.models.FirebaseSignUpResponse;
 import app.groopy.userservice.infrastructure.repository.models.FirebaseUpdateProfileRequest;
 import app.groopy.userservice.infrastructure.repository.models.FirebaseUpdateProfileResponse;
-import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -19,7 +18,6 @@ import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.ListUsersPage;
 import com.google.firebase.auth.UserRecord;
 import lombok.SneakyThrows;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
