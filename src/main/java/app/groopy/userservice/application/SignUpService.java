@@ -6,6 +6,7 @@ import app.groopy.userservice.domain.models.SignUpInternalResponse;
 import app.groopy.userservice.domain.models.common.UserDetails;
 import app.groopy.userservice.infrastructure.services.ElasticsearchUserService;
 import app.groopy.userservice.infrastructure.services.FirebaseService;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,12 +15,12 @@ public class SignUpService {
 
     @Autowired
     private SignUpValidator validator;
-
     @Autowired
     private FirebaseService firebaseService;
     @Autowired
     private ElasticsearchUserService elasticsearchUserService;
 
+    @SneakyThrows
     public SignUpInternalResponse register(SignUpInternalRequest request) {
         validator.validate(request);
 

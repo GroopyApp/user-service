@@ -23,3 +23,7 @@ message UserDetails {
   string user_id = 1;
   string email = 2;
 }
+
+message ErrorResponse {
+  string description = 1;
+}
