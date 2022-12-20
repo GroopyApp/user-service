@@ -11,7 +11,7 @@ EXPOSE 8091
 
 RUN mkdir /app
 WORKDIR /app
-COPY . /app
+COPY . .
 RUN ./gradlew build
 
 

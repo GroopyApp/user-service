@@ -20,5 +20,5 @@ elasticsearch:
 firebase:
   key: 'AIzaSyDWPGT6TyVUsc4v_3dsa8UrkPc725-ZXgc'
   authentication:
-    host: 'https://identitytoolkit.googleapis.com/v1/accounts'
-    signUpEndpoint: ':signUp'
+    host: 'https://identitytoolkit.googleapis.com/v1/'
+    signUpEndpoint: 'accounts:signUp'

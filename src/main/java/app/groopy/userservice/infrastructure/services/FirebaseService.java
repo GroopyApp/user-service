@@ -20,14 +20,12 @@ import com.google.firebase.auth.UserRecord;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -43,8 +41,7 @@ public class FirebaseService {
     @SneakyThrows
     @Autowired
     public FirebaseService(@Value("${firebase.authentication.host}") String firebaseHost) {
-        File file = ResourceUtils.getFile("classpath:groopy-9356d-firebase-adminsdk-iszyf-91b95d0922.json");
-        InputStream in = new FileInputStream(file);
+        InputStream in = new ClassPathResource("groopy-9356d-firebase-adminsdk-iszyf-91b95d0922.json").getInputStream();
 
         FirebaseOptions options = new FirebaseOptions.Builder()
                 .setCredentials(GoogleCredentials.fromStream(in))
