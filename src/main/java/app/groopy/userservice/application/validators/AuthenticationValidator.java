@@ -21,7 +21,7 @@ public class AuthenticationValidator {
         if (!EMAIL_VALIDATOR.isValid(request.getEmail())) {
             throw new AuthenticationValidationException("email", request.getEmail());
         }
-        if (request.getUsername().isEmpty()) {
+        if (request.getUsername() == null || request.getUsername().isEmpty()) {
             throw new AuthenticationValidationException("username cannot be null");
         }
         //TODO add more validations

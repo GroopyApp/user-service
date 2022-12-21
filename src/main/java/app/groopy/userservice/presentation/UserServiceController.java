@@ -2,7 +2,6 @@ package app.groopy.userservice.presentation;
 
 import app.groopy.protobuf.UserServiceProto;
 import app.groopy.userservice.application.AuthenticationService;
-import app.groopy.userservice.application.UserDetailsService;
 import app.groopy.userservice.presentation.mapper.PresentationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,8 +17,6 @@ public class UserServiceController {
 
     @Autowired
     private AuthenticationService authenticationService;
-    @Autowired
-    private UserDetailsService userDetailsService;
 
     @Autowired
     private PresentationMapper presentationMapper;
@@ -43,15 +40,6 @@ public class UserServiceController {
         UserServiceProto.SignUpResponse response = presentationMapper.map(
                 authenticationService.register(presentationMapper.map(payload))
         );
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping(value = "/{userId}",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserServiceProto.UserDetailsResponse> getUser(@PathVariable("userId") String userId) {
-        LOGGER.info("Processing user details request for userId: {}", userId);
-        UserServiceProto.UserDetailsResponse response = presentationMapper.map(userDetailsService.getUser(userId));
         return ResponseEntity.ok(response);
     }
 

@@ -11,13 +11,9 @@ import app.groopy.userservice.infrastructure.services.ElasticsearchUserService
 import app.groopy.userservice.presentation.UserServiceControllerAdvisor
 import app.groopy.userservice.traits.SampleAuthData
 import org.spockframework.spring.SpringBean
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import spock.lang.Specification
 import spock.lang.Subject
 
-@WebMvcTest(value = AuthenticationService.class)
-@AutoConfigureMockMvc
 class AuthenticationServiceTest extends Specification implements SampleAuthData {
 
     @SpringBean

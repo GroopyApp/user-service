@@ -21,9 +21,9 @@ public class AuthenticationService {
 
     private final Logger LOGGER = LoggerFactory.getLogger(AuthenticationService.class);
 
-    private AuthenticationValidator validator;
-    private AuthServiceProvider authServiceProvider;
-    private ElasticsearchUserService elasticsearchUserService;
+    private final AuthenticationValidator validator;
+    private final AuthServiceProvider authServiceProvider;
+    private final ElasticsearchUserService elasticsearchUserService;
 
     @Autowired
     public AuthenticationService(
