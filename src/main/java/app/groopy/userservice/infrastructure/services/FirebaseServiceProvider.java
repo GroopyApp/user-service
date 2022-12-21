@@ -1,7 +1,7 @@
 package app.groopy.userservice.infrastructure.services;
 
-import app.groopy.userservice.domain.exceptions.FirebaseAuthException;
-import app.groopy.userservice.domain.exceptions.FirebaseUserProfileException;
+import app.groopy.userservice.infrastructure.repository.exceptions.FirebaseAuthException;
+import app.groopy.userservice.infrastructure.repository.exceptions.FirebaseUserProfileException;
 import app.groopy.userservice.domain.models.SignInInternalRequest;
 import app.groopy.userservice.domain.models.SignInInternalResponse;
 import app.groopy.userservice.domain.models.SignUpInternalRequest;
@@ -17,6 +17,8 @@ import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.ListUsersPage;
 import com.google.firebase.auth.UserRecord;
 import lombok.SneakyThrows;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -30,14 +32,16 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
-public class FirebaseService {
+public class FirebaseServiceProvider implements AuthServiceProvider {
+
+    private final Logger LOGGER = LoggerFactory.getLogger(FirebaseServiceProvider.class);
 
     FirebaseRepository firebaseRepository;
     FirebaseAuth firebaseInstance;
 
     @SneakyThrows
     @Autowired
-    public FirebaseService(@Value("${firebase.authentication.host}") String firebaseHost) {
+    public FirebaseServiceProvider(@Value("${firebase.authentication.host}") String firebaseHost) {
         InputStream in = new ClassPathResource("groopy-9356d-firebase-adminsdk-iszyf-91b95d0922.json").getInputStream();
 
         FirebaseOptions options = new FirebaseOptions.Builder()
@@ -93,9 +97,24 @@ public class FirebaseService {
                     .token(entity.getToken())
                     .build();
         } catch (FirebaseUserProfileException ex) {
-            //TODO add fallback and delete registered user
-            return null;
+            deleteUser(signUpResponse.body().getEmail());
+            throw ex;
         }
+    }
+
+    public void deleteUser(String uid) {
+        try {
+            firebaseInstance.deleteUser(uid);
+        } catch (Exception ex) {
+            LOGGER.error(String.format("An error occurred trying to delete the user with UID: %s", uid));
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @SneakyThrows
+    public void deleteAllUsers() {
+        ListUsersPage users = firebaseInstance.listUsers(null);
+        firebaseInstance.deleteUsers(StreamSupport.stream(users.iterateAll().spliterator(), false).map(UserRecord::getUid).collect(Collectors.toList()));
     }
 
     @SneakyThrows
@@ -152,9 +171,4 @@ public class FirebaseService {
                 .build();
     }
 
-    @SneakyThrows
-    public void deleteAllUsers() {
-        ListUsersPage users = firebaseInstance.listUsers(null);
-        firebaseInstance.deleteUsers(StreamSupport.stream(users.iterateAll().spliterator(), false).map(UserRecord::getUid).collect(Collectors.toList()));
-    }
 }

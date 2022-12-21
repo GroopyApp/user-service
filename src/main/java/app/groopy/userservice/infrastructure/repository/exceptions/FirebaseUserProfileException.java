@@ -1,4 +1,4 @@
-package app.groopy.userservice.domain.exceptions;
+package app.groopy.userservice.infrastructure.repository.exceptions;
 
 public class FirebaseUserProfileException extends Throwable {
 
