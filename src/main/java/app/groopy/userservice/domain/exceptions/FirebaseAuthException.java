@@ -1,8 +1,8 @@
 package app.groopy.userservice.domain.exceptions;
 
-public class FirebaseSignUpException extends Throwable {
+public class FirebaseAuthException extends Throwable {
 
-    public FirebaseSignUpException(String firebaseError) {
+    public FirebaseAuthException(String firebaseError) {
         super("Firebase call failed: " + firebaseError);
     }
 }

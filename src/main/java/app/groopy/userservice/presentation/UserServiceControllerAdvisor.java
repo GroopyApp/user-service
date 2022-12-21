@@ -22,7 +22,7 @@ public class UserServiceControllerAdvisor extends ResponseEntityExceptionHandler
             SignUpValidationException ex, WebRequest request) {
 
         UserServiceProto.ErrorResponse response = UserServiceProto.ErrorResponse.newBuilder()
-                .setDescription(ex.getLocalizedMessage()).build();
+                .setErrorMessage(ex.getLocalizedMessage()).build();
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }

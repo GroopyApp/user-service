@@ -1,7 +1,7 @@
 package app.groopy.userservice.presentation;
 
 import app.groopy.protobuf.UserServiceProto;
-import app.groopy.userservice.application.SignUpService;
+import app.groopy.userservice.application.AuthenticationService;
 import app.groopy.userservice.application.UserDetailsService;
 import app.groopy.userservice.presentation.mapper.PresentationMapper;
 import org.slf4j.Logger;
@@ -17,12 +17,23 @@ public class UserServiceController {
     private final Logger LOGGER = LoggerFactory.getLogger(UserServiceController.class);
 
     @Autowired
-    private SignUpService signUpService;
+    private AuthenticationService authenticationService;
     @Autowired
     private UserDetailsService userDetailsService;
 
     @Autowired
     private PresentationMapper presentationMapper;
+
+    @PostMapping(value = "/signIn",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserServiceProto.SignInResponse> signIn(@RequestBody UserServiceProto.SignInRequest payload) {
+        LOGGER.info("Processing message {}", payload);
+        UserServiceProto.SignInResponse response = presentationMapper.map(
+                authenticationService.login(presentationMapper.map(payload))
+        );
+        return ResponseEntity.ok(response);
+    }
 
     @PostMapping(value = "/signUp",
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -30,7 +41,7 @@ public class UserServiceController {
     public ResponseEntity<UserServiceProto.SignUpResponse> signUp(@RequestBody UserServiceProto.SignUpRequest payload) {
         LOGGER.info("Processing message {}", payload);
         UserServiceProto.SignUpResponse response = presentationMapper.map(
-                signUpService.register(presentationMapper.map(payload))
+                authenticationService.register(presentationMapper.map(payload))
         );
         return ResponseEntity.ok(response);
     }
@@ -46,6 +57,6 @@ public class UserServiceController {
 
     @GetMapping(value = "dev/deleteAll", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity deleteAllUsers() {
-        signUpService.deleteAllUsers();
+        authenticationService.deleteAllUsers();
         return ResponseEntity.ok().build();
     }}

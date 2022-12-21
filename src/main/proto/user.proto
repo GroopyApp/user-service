@@ -3,8 +3,18 @@ package userservice;
 option java_package = "app.groopy.protobuf";
 option java_outer_classname = "UserServiceProto";
 
+message SignInRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message SignInResponse {
+  UserDetails data = 1;
+  string token = 2;
+}
+
 message SignUpRequest {
-  string name = 1;
+  string username = 1;
   string email = 2;
   string password = 3;
   string photo_url = 4;
@@ -25,5 +35,5 @@ message UserDetails {
 }
 
 message ErrorResponse {
-  string description = 1;
+  string error_message = 1;
 }

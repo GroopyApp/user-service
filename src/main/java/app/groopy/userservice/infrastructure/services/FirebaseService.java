@@ -1,15 +1,14 @@
 package app.groopy.userservice.infrastructure.services;
 
-import app.groopy.userservice.domain.exceptions.FirebaseSignUpException;
-import app.groopy.userservice.domain.exceptions.FirebaseUpdateProfileException;
+import app.groopy.userservice.domain.exceptions.FirebaseAuthException;
+import app.groopy.userservice.domain.exceptions.FirebaseUserProfileException;
+import app.groopy.userservice.domain.models.SignInInternalRequest;
+import app.groopy.userservice.domain.models.SignInInternalResponse;
 import app.groopy.userservice.domain.models.SignUpInternalRequest;
 import app.groopy.userservice.domain.models.SignUpInternalResponse;
 import app.groopy.userservice.domain.models.common.UserDetails;
 import app.groopy.userservice.infrastructure.repository.FirebaseRepository;
-import app.groopy.userservice.infrastructure.repository.models.FirebaseSignUpRequest;
-import app.groopy.userservice.infrastructure.repository.models.FirebaseSignUpResponse;
-import app.groopy.userservice.infrastructure.repository.models.FirebaseUpdateProfileRequest;
-import app.groopy.userservice.infrastructure.repository.models.FirebaseUpdateProfileResponse;
+import app.groopy.userservice.infrastructure.repository.models.*;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -27,13 +26,11 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.io.InputStream;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
 public class FirebaseService {
-
 
     FirebaseRepository firebaseRepository;
     FirebaseAuth firebaseInstance;
@@ -59,45 +56,100 @@ public class FirebaseService {
     }
 
     @SneakyThrows
-    public SignUpInternalResponse signUp(SignUpInternalRequest request) {
+    public SignInInternalResponse signIn(SignInInternalRequest request) {
+        Response<FirebaseSignInResponse> signInResponse = firebaseRepository.signIn(FirebaseSignInRequest.builder()
+                .email(request.getEmail())
+                .password(request.getPassword())
+                .returnSecureToken(true)
+                .build()).execute();
 
+        if (!signInResponse.isSuccessful()) {
+            throw new FirebaseAuthException(signInResponse.errorBody() != null ? signInResponse.errorBody().toString() : "Unknown error");
+        }
+
+        FirebaseUserDetailsResponse entity = getUserDetails(signInResponse.body().getIdToken());
+
+        return SignInInternalResponse.builder()
+                .user(entity.getResponse())
+                .token(entity.getToken())
+                .build();
+    }
+
+    @SneakyThrows
+    public SignUpInternalResponse signUp(SignUpInternalRequest request) {
         Response<FirebaseSignUpResponse> signUpResponse = firebaseRepository.signUp(FirebaseSignUpRequest.builder()
-                        .email(request.getEmail().isEmpty() ? null : request.getEmail())
-                        .password(request.getPassword().isEmpty() ? null : request.getPassword())
+                        .email(request.getEmail())
+                        .password(request.getPassword())
                         .returnSecureToken(true)
                 .build()).execute();
         if (!signUpResponse.isSuccessful()) {
-            throw new FirebaseSignUpException(signUpResponse.errorBody() != null ? signUpResponse.errorBody().toString() : "Unknown error");
+            throw new FirebaseAuthException(signUpResponse.errorBody() != null ? signUpResponse.errorBody().toString() : "Unknown error");
         }
 
-        Response<FirebaseUpdateProfileResponse> updateProfileResponse = firebaseRepository.updateProfile(FirebaseUpdateProfileRequest.builder()
-                        .idToken(signUpResponse.body() != null ? signUpResponse.body().getIdToken() : null)
-                        .returnSecureToken(true)
-                        .displayName(getRandomName())
+        try {
+            FirebaseUserDetailsResponse entity = updateUserDetails(signUpResponse.body().getIdToken(), request.getUsername(), request.getPhotoUrl());
+            return SignUpInternalResponse.builder()
+                    .user(entity.getResponse())
+                    .token(entity.getToken())
+                    .build();
+        } catch (FirebaseUserProfileException ex) {
+            //TODO add fallback and delete registered user
+            return null;
+        }
+    }
+
+    @SneakyThrows
+    private FirebaseUserDetailsResponse getUserDetails(String idToken) {
+        Response<FirebaseUserProfileResponse> lookupProfileResponse = firebaseRepository.lookupProfile(FirebaseUserProfileRequest.builder()
+                .idToken(idToken)
                 .build()).execute();
 
-        if (!updateProfileResponse.isSuccessful()) {
-            throw new FirebaseUpdateProfileException(updateProfileResponse.errorBody() != null ? updateProfileResponse.errorBody().toString() : "Unknown error");
+        if (!lookupProfileResponse.isSuccessful()) {
+            throw new FirebaseUserProfileException(lookupProfileResponse.errorBody() != null ? lookupProfileResponse.errorBody().toString() : "Unknown error");
         }
 
-        FirebaseUpdateProfileResponse entity = updateProfileResponse.body();
+        FirebaseToken decodedToken =  firebaseInstance.verifyIdToken(idToken);
 
-        FirebaseToken decodedToken =  firebaseInstance.verifyIdToken(signUpResponse.body().getIdToken());
+        if (lookupProfileResponse.body().getUsers().isEmpty()) {
+            throw new FirebaseUserProfileException("User details not found");
+        }
 
-        return SignUpInternalResponse.builder()
-                .user(UserDetails.builder()
-                        .userId(entity.getDisplayName())
-//                        .email(entity.getEmail())
-                        .email("test@test.com")
-                        .build())
+        FirebaseUserProfileResponse.User entity = lookupProfileResponse.body().getUsers().get(0);
+
+        return FirebaseUserDetailsResponse.builder()
+                .response(UserDetails.builder()
+                                .userId(entity.getDisplayName())
+                                .email(entity.getEmail())
+                        //TODO add other fields
+                                .build())
                 .token(firebaseInstance.createCustomToken(decodedToken.getUid()))
                 .build();
     }
 
-    private String getRandomName() {
-        return UUID.randomUUID()
-                .toString()
-                .substring(0, 6);
+    @SneakyThrows
+    private FirebaseUserDetailsResponse updateUserDetails(String idToken, String username, String photoUrl) throws FirebaseUserProfileException {
+        Response<FirebaseUpdateProfileResponse> updateProfileResponse = firebaseRepository.updateProfile(FirebaseUpdateProfileRequest.builder()
+                .idToken(idToken)
+                .returnSecureToken(true)
+                .displayName(username)
+                .photoUrl(photoUrl)
+                .build()).execute();
+
+        if (!updateProfileResponse.isSuccessful()) {
+            throw new FirebaseUserProfileException(updateProfileResponse.errorBody() != null ? updateProfileResponse.errorBody().toString() : "Unknown error");
+        }
+
+        FirebaseToken decodedToken =  firebaseInstance.verifyIdToken(idToken);
+        FirebaseUpdateProfileResponse entity = updateProfileResponse.body();
+
+        return FirebaseUserDetailsResponse.builder()
+                .response(UserDetails.builder()
+                        .userId(entity.getDisplayName())
+                        .email(entity.getEmail())
+                        //TODO add other fields
+                        .build())
+                .token(firebaseInstance.createCustomToken(decodedToken.getUid()))
+                .build();
     }
 
     @SneakyThrows
