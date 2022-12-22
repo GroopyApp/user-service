@@ -1,4 +1,6 @@
-package app.groopy.userservice.application.mapper;
+package app.groopy.userservice.application.mapper
 
-public class ApplicationMapperTest {
+import spock.lang.Specification;
+
+class ApplicationMapperTest extends Specification {
 }
