@@ -90,7 +90,7 @@ class AuthenticationServiceTest extends Specification implements SampleAuthData 
 
         then:
         final SignUpException _ = thrown()
-        1 * authServiceProvider.deleteUser(providerSignUpRequest.email)
+        1 * authServiceProvider.deleteUser(signUpResponse.localId)
     }
 
     def "when a login request is performed and the authProvider and elasticsearch results are ok, a response is returned"() {
