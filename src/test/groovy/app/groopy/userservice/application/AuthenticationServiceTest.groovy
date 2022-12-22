@@ -8,16 +8,12 @@ import app.groopy.userservice.infrastructure.repository.exceptions.Elasticsearch
 import app.groopy.userservice.infrastructure.repository.exceptions.FirebaseAuthException
 import app.groopy.userservice.infrastructure.services.AuthServiceProvider
 import app.groopy.userservice.infrastructure.services.ElasticsearchUserService
-import app.groopy.userservice.presentation.UserServiceControllerAdvisor
 import app.groopy.userservice.traits.SampleAuthData
 import org.spockframework.spring.SpringBean
 import spock.lang.Specification
 import spock.lang.Subject
 
 class AuthenticationServiceTest extends Specification implements SampleAuthData {
-
-    @SpringBean
-    private UserServiceControllerAdvisor advisor = Mock UserServiceControllerAdvisor
 
     @SpringBean
     private AuthenticationValidator validator = Mock AuthenticationValidator
