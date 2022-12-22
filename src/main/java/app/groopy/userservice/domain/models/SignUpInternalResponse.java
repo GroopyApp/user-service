@@ -8,5 +8,6 @@ import lombok.Data;
 @Builder
 public class SignUpInternalResponse {
     private UserDetails user;
+    private String localId;
     private String token;
 }

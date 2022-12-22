@@ -94,10 +94,11 @@ public class FirebaseServiceProvider implements AuthServiceProvider {
             FirebaseUserDetailsResponse entity = updateUserDetails(signUpResponse.body().getIdToken(), request.getUsername(), request.getPhotoUrl());
             return SignUpInternalResponse.builder()
                     .user(entity.getResponse())
+                    .localId(signUpResponse.body().getLocalId())
                     .token(entity.getToken())
                     .build();
         } catch (FirebaseUserProfileException ex) {
-            deleteUser(signUpResponse.body().getEmail());
+            deleteUser(signUpResponse.body().getLocalId());
             throw ex;
         }
     }

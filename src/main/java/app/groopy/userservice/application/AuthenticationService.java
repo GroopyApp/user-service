@@ -47,7 +47,7 @@ public class AuthenticationService {
                         String.format("An error occurred trying to save user in ESDB, user registration will be rolled back: request:{%s}, error:{%s",
                                 request,
                                 ex.getLocalizedMessage()));
-                authServiceProvider.deleteUser(response.getUser().getEmail());
+                authServiceProvider.deleteUser(response.getLocalId());
                 throw new SignUpException(request, ex.getLocalizedMessage());
             }
             return response;
