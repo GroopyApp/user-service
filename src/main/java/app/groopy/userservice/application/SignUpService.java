@@ -5,8 +5,8 @@ import app.groopy.userservice.domain.exceptions.AuthenticationValidationExceptio
 import app.groopy.userservice.domain.exceptions.SignUpException;
 import app.groopy.userservice.domain.models.SignUpRequestDto;
 import app.groopy.userservice.domain.models.SignUpResponseDto;
+import app.groopy.userservice.infrastructure.providers.AuthenticationProvider;
 import app.groopy.userservice.infrastructure.providers.ElasticsearchProvider;
-import app.groopy.userservice.infrastructure.services.AuthServiceProvider;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,16 +21,16 @@ public class SignUpService extends AuthenticationService<SignUpRequestDto, SignU
     @Autowired
     public SignUpService(
             AuthenticationValidator validator,
-            AuthServiceProvider authServiceProvider,
+            AuthenticationProvider authenticationProvider,
             ElasticsearchProvider elasticsearchProvider) {
-        super(validator, authServiceProvider, elasticsearchProvider);
+        super(validator, authenticationProvider, elasticsearchProvider);
     }
 
     @SneakyThrows({AuthenticationValidationException.class, SignUpException.class})
     public SignUpResponseDto perform(SignUpRequestDto request) {
         validator.validate(request);
         try {
-            SignUpResponseDto response = authServiceProvider.signUp(request);
+            SignUpResponseDto response = authenticationProvider.signUp(request);
             try {
                 elasticsearchProvider.save(response.getUser());
             } catch (Throwable ex) {
@@ -38,7 +38,7 @@ public class SignUpService extends AuthenticationService<SignUpRequestDto, SignU
                         String.format("An error occurred trying to save user in ESDB, user registration will be rolled back: request:{%s}, error:{%s",
                                 request,
                                 ex.getLocalizedMessage()));
-                authServiceProvider.deleteUser(response.getLocalId());
+                authenticationProvider.deleteUser(response.getLocalId());
                 throw new SignUpException(request, ex.getLocalizedMessage());
             }
             return response;

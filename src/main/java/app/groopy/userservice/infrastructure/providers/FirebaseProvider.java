@@ -9,7 +9,6 @@ import app.groopy.userservice.domain.models.SignInRequestDto;
 import app.groopy.userservice.domain.models.SignUpRequestDto;
 import app.groopy.userservice.infrastructure.repository.FirebaseRepository;
 import app.groopy.userservice.infrastructure.repository.models.firebase.*;
-import app.groopy.userservice.infrastructure.services.AuthServiceProvider;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -33,7 +32,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Component
-public class FirebaseProvider implements AuthServiceProvider {
+public class FirebaseProvider implements AuthenticationProvider {
 
     private final Logger LOGGER = LoggerFactory.getLogger(FirebaseProvider.class);
 

@@ -1,19 +1,19 @@
 package app.groopy.userservice.application;
 
 import app.groopy.userservice.application.validators.AuthenticationValidator;
+import app.groopy.userservice.infrastructure.providers.AuthenticationProvider;
 import app.groopy.userservice.infrastructure.providers.ElasticsearchProvider;
-import app.groopy.userservice.infrastructure.services.AuthServiceProvider;
 
 public abstract class AuthenticationService<I, O> {
 
     protected final AuthenticationValidator validator;
-    protected final AuthServiceProvider authServiceProvider;
+    protected final AuthenticationProvider authenticationProvider;
     protected final ElasticsearchProvider elasticsearchProvider;
 
 
-    protected AuthenticationService(AuthenticationValidator validator, AuthServiceProvider authServiceProvider, ElasticsearchProvider elasticsearchProvider) {
+    protected AuthenticationService(AuthenticationValidator validator, AuthenticationProvider authenticationProvider, ElasticsearchProvider elasticsearchProvider) {
         this.validator = validator;
-        this.authServiceProvider = authServiceProvider;
+        this.authenticationProvider = authenticationProvider;
         this.elasticsearchProvider = elasticsearchProvider;
     }
 
@@ -22,6 +22,6 @@ public abstract class AuthenticationService<I, O> {
 
     //FIXME DEV USE ONLY, REMOVE IT
     public void deleteAllUsers() {
-        authServiceProvider.deleteAllUsers();
+        authenticationProvider.deleteAllUsers();
     }
 }

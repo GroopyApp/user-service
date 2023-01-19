@@ -5,8 +5,8 @@ import app.groopy.userservice.domain.exceptions.AuthenticationValidationExceptio
 import app.groopy.userservice.domain.exceptions.SignInException;
 import app.groopy.userservice.domain.models.SignInRequestDto;
 import app.groopy.userservice.domain.models.SignInResponseDto;
+import app.groopy.userservice.infrastructure.providers.AuthenticationProvider;
 import app.groopy.userservice.infrastructure.providers.ElasticsearchProvider;
-import app.groopy.userservice.infrastructure.services.AuthServiceProvider;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +21,9 @@ public class SignInService extends AuthenticationService<SignInRequestDto, SignI
     @Autowired
     public SignInService(
             AuthenticationValidator validator,
-            AuthServiceProvider authServiceProvider,
+            AuthenticationProvider authenticationProvider,
             ElasticsearchProvider elasticsearchProvider) {
-        super(validator, authServiceProvider, elasticsearchProvider);
+        super(validator, authenticationProvider, elasticsearchProvider);
     }
 
     @SneakyThrows({AuthenticationValidationException.class, SignInException.class})
@@ -31,7 +31,7 @@ public class SignInService extends AuthenticationService<SignInRequestDto, SignI
         validator.validate(request);
         try {
             //TODO send user status update to ES
-            return authServiceProvider.signIn(request);
+            return authenticationProvider.signIn(request);
         } catch (Exception ex) {
             throw new SignInException(request, ex.getLocalizedMessage());
         }

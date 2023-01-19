@@ -16,9 +16,6 @@ import app.groopy.protobuf.UserServiceProto;
 @ControllerAdvice
 public class UserServiceControllerAdvisor extends ResponseEntityExceptionHandler {
 
-    @Autowired
-    private PresentationMapper mapper;
-
     @ExceptionHandler(AuthenticationValidationException.class)
     public ResponseEntity<UserServiceProto.ErrorResponse> handle(
             AuthenticationValidationException ex, WebRequest request) {
