@@ -4,8 +4,8 @@ import app.groopy.userservice.application.validators.SignUpValidator;
 import app.groopy.userservice.domain.models.SignUpInternalRequest;
 import app.groopy.userservice.domain.models.SignUpInternalResponse;
 import app.groopy.userservice.domain.models.common.UserDetails;
-import app.groopy.userservice.infrastructure.services.ElasticsearchUserService;
-import app.groopy.userservice.infrastructure.services.FirebaseService;
+import app.groopy.userservice.infrastructure.providers.ElasticsearchProvider;
+import app.groopy.userservice.infrastructure.providers.FirebaseProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,16 +16,16 @@ public class SignUpService {
     private SignUpValidator validator;
 
     @Autowired
-    private FirebaseService firebaseService;
+    private FirebaseProvider firebaseProvider;
     @Autowired
-    private ElasticsearchUserService elasticsearchUserService;
+    private ElasticsearchProvider elasticsearchProvider;
 
     public SignUpInternalResponse register(SignUpInternalRequest request) {
         validator.validate(request);
 
-        SignUpInternalResponse response = firebaseService.signUp(request);
+        SignUpInternalResponse response = firebaseProvider.signUp(request);
 
-        elasticsearchUserService.save(UserDetails.builder()
+        elasticsearchProvider.save(UserDetails.builder()
                         .userId(response.getUser().getUserId())
                         .email(response.getUser().getEmail())
                 .build());
@@ -34,6 +34,6 @@ public class SignUpService {
     }
 
     public void deleteAllUsers() {
-        firebaseService.deleteAllUsers();
+        firebaseProvider.deleteAllUsers();
     }
 }

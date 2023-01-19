@@ -1,4 +1,4 @@
-package app.groopy.userservice.infrastructure.services;
+package app.groopy.userservice.infrastructure.providers;
 
 import app.groopy.userservice.domain.exceptions.FirebaseSignUpException;
 import app.groopy.userservice.domain.exceptions.FirebaseUpdateProfileException;
@@ -21,7 +21,7 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -31,8 +31,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-@Service
-public class FirebaseService {
+@Component
+public class FirebaseProvider {
 
 
     FirebaseRepository firebaseRepository;
@@ -40,7 +40,7 @@ public class FirebaseService {
 
     @SneakyThrows
     @Autowired
-    public FirebaseService(@Value("${firebase.authentication.host}") String firebaseHost) {
+    public FirebaseProvider(@Value("${firebase.authentication.host}") String firebaseHost) {
         InputStream in = new ClassPathResource("groopy-9356d-firebase-adminsdk-iszyf-91b95d0922.json").getInputStream();
 
         FirebaseOptions options = new FirebaseOptions.Builder()
