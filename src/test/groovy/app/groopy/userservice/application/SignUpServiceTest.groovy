@@ -4,26 +4,26 @@ import app.groopy.userservice.application.validators.AuthenticationValidator
 import app.groopy.userservice.domain.exceptions.SignInException
 import app.groopy.userservice.domain.exceptions.SignUpException
 import app.groopy.userservice.domain.exceptions.AuthenticationValidationException
+import app.groopy.userservice.infrastructure.providers.ElasticsearchProvider
 import app.groopy.userservice.infrastructure.repository.exceptions.ElasticsearchServiceException
 import app.groopy.userservice.infrastructure.repository.exceptions.FirebaseAuthException
 import app.groopy.userservice.infrastructure.services.AuthServiceProvider
-import app.groopy.userservice.infrastructure.services.ElasticsearchUserService
 import app.groopy.userservice.traits.SampleAuthData
 import org.spockframework.spring.SpringBean
 import spock.lang.Specification
 import spock.lang.Subject
 
-class AuthenticationServiceTest extends Specification implements SampleAuthData {
+class SignUpServiceTest extends Specification implements SampleAuthData {
 
     @SpringBean
     private AuthenticationValidator validator = Mock AuthenticationValidator
     @SpringBean
     private AuthServiceProvider authServiceProvider = Mock AuthServiceProvider
     @SpringBean
-    private ElasticsearchUserService elasticsearchUserService = Mock ElasticsearchUserService
+    private ElasticsearchProvider elasticsearchProvider = Mock ElasticsearchProvider
 
     @Subject
-    def testSubject = new AuthenticationService(validator, authServiceProvider, elasticsearchUserService)
+    def testSubject = new SignUpService(validator, authServiceProvider, elasticsearchProvider)
 
     def "when a register request is performed and the authProvider and elasticsearch results are ok, a response is returned"() {
 
@@ -54,7 +54,7 @@ class AuthenticationServiceTest extends Specification implements SampleAuthData 
 
         then:
         0 * authServiceProvider.signUp(_)
-        0 * elasticsearchUserService.save(_)
+        0 * elasticsearchProvider.save(_)
         final AuthenticationValidationException _ = thrown()
     }
 
@@ -70,7 +70,7 @@ class AuthenticationServiceTest extends Specification implements SampleAuthData 
         testSubject.register(providerSignUpRequest)
 
         then:
-        0 * elasticsearchUserService.save(_)
+        0 * elasticsearchProvider.save(_)
         final SignUpException _ = thrown()
     }
 
@@ -83,7 +83,7 @@ class AuthenticationServiceTest extends Specification implements SampleAuthData 
         authServiceProvider.signUp(providerSignUpRequest) >> signUpResponse
 
         and:
-        elasticsearchUserService.save(signUpResponse.user) >> { throw new ElasticsearchServiceException("SAVE", "test error")}
+        elasticsearchProvider.save(signUpResponse.user) >> { throw new ElasticsearchServiceException("SAVE", "test error")}
 
         when:
         testSubject.register(providerSignUpRequest)
@@ -91,52 +91,5 @@ class AuthenticationServiceTest extends Specification implements SampleAuthData 
         then:
         final SignUpException _ = thrown()
         1 * authServiceProvider.deleteUser(signUpResponse.localId)
-    }
-
-    def "when a login request is performed and the authProvider and elasticsearch results are ok, a response is returned"() {
-
-        given:
-        def providerSignInRequest = sampleSignInRequest()
-        def providerSignInResponse = sampleSignInResponse()
-
-        and:
-        authServiceProvider.signIn(providerSignInRequest) >> providerSignInResponse
-
-        when:
-        def loginResponse = testSubject.login(providerSignInRequest)
-
-        then:
-        loginResponse == providerSignInResponse
-    }
-
-    def "when a login request is performed and the validation fails, an exception is thrown"() {
-
-        given:
-        def providerSignInRequest = sampleSignInRequest()
-
-        and:
-        validator.validate(providerSignInRequest) >> { throw new AuthenticationValidationException("test error") }
-
-        when:
-        testSubject.login(providerSignInRequest)
-
-        then:
-        0 * authServiceProvider.signIn(_)
-        final AuthenticationValidationException _ = thrown()
-    }
-
-    def "when a login request is performed and the authProvider fails, an exception is thrown"() {
-
-        given:
-        def providerSignInRequest = sampleSignInRequest()
-
-        and:
-        authServiceProvider.signIn(providerSignInRequest) >> { throw new FirebaseAuthException("test error") }
-
-        when:
-        testSubject.login(providerSignInRequest)
-
-        then:
-        final SignInException _ = thrown()
     }
 }

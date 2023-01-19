@@ -14,27 +14,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SignInService {
+public class SignInService extends AuthenticationService<SignInInternalRequest, SignInInternalResponse> {
 
     private final Logger LOGGER = LoggerFactory.getLogger(SignInService.class);
-
-    private final AuthenticationValidator validator;
-
-    private final AuthServiceProvider authServiceProvider;
-    private final ElasticsearchProvider elasticsearchProvider;
 
     @Autowired
     public SignInService(
             AuthenticationValidator validator,
             AuthServiceProvider authServiceProvider,
             ElasticsearchProvider elasticsearchProvider) {
-        this.validator = validator;
-        this.authServiceProvider = authServiceProvider;
-        this.elasticsearchProvider = elasticsearchProvider;
+        super(validator, authServiceProvider, elasticsearchProvider);
     }
 
     @SneakyThrows({AuthenticationValidationException.class, SignInException.class})
-    public SignInInternalResponse login(SignInInternalRequest request) {
+    public SignInInternalResponse perform(SignInInternalRequest request) {
         validator.validate(request);
         try {
             //TODO send user status update to ES
@@ -42,10 +35,5 @@ public class SignInService {
         } catch (Exception ex) {
             throw new SignInException(request, ex.getLocalizedMessage());
         }
-    }
-
-    //FIXME DEV USE ONLY, REMOVE IT
-    public void deleteAllUsers() {
-        authServiceProvider.deleteAllUsers();
     }
 }

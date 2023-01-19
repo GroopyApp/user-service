@@ -30,7 +30,7 @@ public class UserServiceController {
     public ResponseEntity<UserServiceProto.SignInResponse> signIn(@RequestBody UserServiceProto.SignInRequest payload) {
         LOGGER.info("Processing message {}", payload);
         UserServiceProto.SignInResponse response = presentationMapper.map(
-                signInService.login(presentationMapper.map(payload))
+                signInService.perform(presentationMapper.map(payload))
         );
         return ResponseEntity.ok(response);
     }
@@ -41,7 +41,7 @@ public class UserServiceController {
     public ResponseEntity<UserServiceProto.SignUpResponse> signUp(@RequestBody UserServiceProto.SignUpRequest payload) {
         LOGGER.info("Processing message {}", payload);
         UserServiceProto.SignUpResponse response = presentationMapper.map(
-                signUpService.register(presentationMapper.map(payload))
+                signUpService.perform(presentationMapper.map(payload))
         );
         return ResponseEntity.ok(response);
     }

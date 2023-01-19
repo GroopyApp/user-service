@@ -17,26 +17,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SignUpService {
+public class SignUpService extends AuthenticationService<SignUpInternalRequest, SignUpInternalResponse> {
 
     private final Logger LOGGER = LoggerFactory.getLogger(SignUpService.class);
-
-    private final AuthenticationValidator validator;
-    private final AuthServiceProvider authServiceProvider;
-    private final ElasticsearchProvider elasticsearchProvider;
 
     @Autowired
     public SignUpService(
             AuthenticationValidator validator,
             AuthServiceProvider authServiceProvider,
             ElasticsearchProvider elasticsearchProvider) {
-        this.validator = validator;
-        this.authServiceProvider = authServiceProvider;
-        this.elasticsearchProvider = elasticsearchProvider;
+        super(validator, authServiceProvider, elasticsearchProvider);
     }
 
     @SneakyThrows({AuthenticationValidationException.class, SignUpException.class})
-    public SignUpInternalResponse register(SignUpInternalRequest request) {
+    public SignUpInternalResponse perform(SignUpInternalRequest request) {
         validator.validate(request);
         try {
             SignUpInternalResponse response = authServiceProvider.signUp(request);
