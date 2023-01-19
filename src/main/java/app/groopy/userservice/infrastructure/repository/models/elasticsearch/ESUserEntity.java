@@ -1,4 +1,4 @@
-package app.groopy.userservice.infrastructure.repository.models;
+package app.groopy.userservice.infrastructure.repository.models.elasticsearch;
 
 import lombok.Builder;
 import lombok.Data;
@@ -7,7 +7,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 
 import java.util.List;
 
-import static app.groopy.userservice.infrastructure.repository.models.ESIndexes.USER_INDEX;
+import static app.groopy.userservice.infrastructure.repository.models.elasticsearch.ESIndexes.USER_INDEX;
 
 @Data
 @Builder

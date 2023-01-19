@@ -35,7 +35,7 @@ class SignUpServiceTest extends Specification implements SampleAuthData {
         authServiceProvider.signUp(providerSignUpRequest) >> providerSignUpResponse
 
         when:
-        def registerResponse = testSubject.register(providerSignUpRequest)
+        def registerResponse = testSubject.perform(providerSignUpRequest)
 
         then:
         registerResponse == providerSignUpResponse
@@ -50,7 +50,7 @@ class SignUpServiceTest extends Specification implements SampleAuthData {
         validator.validate(providerSignUpRequest) >> { throw new AuthenticationValidationException("test error") }
 
         when:
-        testSubject.register(providerSignUpRequest)
+        testSubject.perform(providerSignUpRequest)
 
         then:
         0 * authServiceProvider.signUp(_)
@@ -67,7 +67,7 @@ class SignUpServiceTest extends Specification implements SampleAuthData {
         authServiceProvider.signUp(providerSignUpRequest) >> { throw new FirebaseAuthException("test error") }
 
         when:
-        testSubject.register(providerSignUpRequest)
+        testSubject.perform(providerSignUpRequest)
 
         then:
         0 * elasticsearchProvider.save(_)
@@ -86,7 +86,7 @@ class SignUpServiceTest extends Specification implements SampleAuthData {
         elasticsearchProvider.save(signUpResponse.user) >> { throw new ElasticsearchServiceException("SAVE", "test error")}
 
         when:
-        testSubject.register(providerSignUpRequest)
+        testSubject.perform(providerSignUpRequest)
 
         then:
         final SignUpException _ = thrown()

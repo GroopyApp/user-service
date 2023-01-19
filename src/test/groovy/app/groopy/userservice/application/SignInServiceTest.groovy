@@ -35,7 +35,7 @@ class SignInServiceTest extends Specification implements SampleAuthData {
         authServiceProvider.signIn(providerSignInRequest) >> providerSignInResponse
 
         when:
-        def loginResponse = testSubject.login(providerSignInRequest)
+        def loginResponse = testSubject.perform(providerSignInRequest)
 
         then:
         loginResponse == providerSignInResponse
@@ -50,7 +50,7 @@ class SignInServiceTest extends Specification implements SampleAuthData {
         validator.validate(providerSignInRequest) >> { throw new AuthenticationValidationException("test error") }
 
         when:
-        testSubject.login(providerSignInRequest)
+        testSubject.perform(providerSignInRequest)
 
         then:
         0 * authServiceProvider.signIn(_)
@@ -66,7 +66,7 @@ class SignInServiceTest extends Specification implements SampleAuthData {
         authServiceProvider.signIn(providerSignInRequest) >> { throw new FirebaseAuthException("test error") }
 
         when:
-        testSubject.login(providerSignInRequest)
+        testSubject.perform(providerSignInRequest)
 
         then:
         final SignInException _ = thrown()

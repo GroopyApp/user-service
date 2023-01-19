@@ -1,6 +1,6 @@
 package app.groopy.userservice.infrastructure.repository;
 
-import app.groopy.userservice.infrastructure.repository.models.*;
+import app.groopy.userservice.infrastructure.repository.models.firebase.*;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;

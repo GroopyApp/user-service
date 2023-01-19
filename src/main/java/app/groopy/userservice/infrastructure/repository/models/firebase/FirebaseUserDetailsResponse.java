@@ -1,4 +1,4 @@
-package app.groopy.userservice.infrastructure.repository.models;
+package app.groopy.userservice.infrastructure.repository.models.firebase;
 
 import app.groopy.userservice.domain.models.common.UserDetailsDto;
 import lombok.Builder;
