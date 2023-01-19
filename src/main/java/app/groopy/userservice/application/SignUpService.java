@@ -1,39 +1,58 @@
 package app.groopy.userservice.application;
 
-import app.groopy.userservice.application.validators.SignUpValidator;
+import app.groopy.userservice.application.validators.AuthenticationValidator;
+import app.groopy.userservice.domain.exceptions.AuthenticationValidationException;
+import app.groopy.userservice.domain.exceptions.SignInException;
+import app.groopy.userservice.domain.exceptions.SignUpException;
+import app.groopy.userservice.domain.models.SignInInternalRequest;
+import app.groopy.userservice.domain.models.SignInInternalResponse;
 import app.groopy.userservice.domain.models.SignUpInternalRequest;
 import app.groopy.userservice.domain.models.SignUpInternalResponse;
-import app.groopy.userservice.domain.models.common.UserDetails;
 import app.groopy.userservice.infrastructure.providers.ElasticsearchProvider;
-import app.groopy.userservice.infrastructure.providers.FirebaseProvider;
+import app.groopy.userservice.infrastructure.services.AuthServiceProvider;
+import lombok.SneakyThrows;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SignUpService {
 
-    @Autowired
-    private SignUpValidator validator;
+    private final Logger LOGGER = LoggerFactory.getLogger(SignUpService.class);
+
+    private final AuthenticationValidator validator;
+    private final AuthServiceProvider authServiceProvider;
+    private final ElasticsearchProvider elasticsearchProvider;
 
     @Autowired
-    private FirebaseProvider firebaseProvider;
-    @Autowired
-    private ElasticsearchProvider elasticsearchProvider;
-
-    public SignUpInternalResponse register(SignUpInternalRequest request) {
-        validator.validate(request);
-
-        SignUpInternalResponse response = firebaseProvider.signUp(request);
-
-        elasticsearchProvider.save(UserDetails.builder()
-                        .userId(response.getUser().getUserId())
-                        .email(response.getUser().getEmail())
-                .build());
-
-        return response;
+    public SignUpService(
+            AuthenticationValidator validator,
+            AuthServiceProvider authServiceProvider,
+            ElasticsearchProvider elasticsearchProvider) {
+        this.validator = validator;
+        this.authServiceProvider = authServiceProvider;
+        this.elasticsearchProvider = elasticsearchProvider;
     }
 
-    public void deleteAllUsers() {
-        firebaseProvider.deleteAllUsers();
+    @SneakyThrows({AuthenticationValidationException.class, SignUpException.class})
+    public SignUpInternalResponse register(SignUpInternalRequest request) {
+        validator.validate(request);
+        try {
+            SignUpInternalResponse response = authServiceProvider.signUp(request);
+            try {
+                elasticsearchProvider.save(response.getUser());
+            } catch (Throwable ex) {
+                LOGGER.error(
+                        String.format("An error occurred trying to save user in ESDB, user registration will be rolled back: request:{%s}, error:{%s",
+                                request,
+                                ex.getLocalizedMessage()));
+                authServiceProvider.deleteUser(response.getLocalId());
+                throw new SignUpException(request, ex.getLocalizedMessage());
+            }
+            return response;
+        } catch (Exception ex) {
+            throw new SignUpException(request, ex.getLocalizedMessage());
+        }
     }
 }
