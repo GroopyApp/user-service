@@ -12,8 +12,13 @@ public interface PresentationMapper {
 
     SignUpInternalRequest map(UserServiceProto.SignUpRequest input);
 
+    SignInInternalRequest map(UserServiceProto.SignInRequest input);
+
     @Mappings({@Mapping(target = "data", source = "user")})
     UserServiceProto.SignUpResponse map(SignUpInternalResponse input);
+
+    @Mappings({@Mapping(target = "data", source = "user")})
+    UserServiceProto.SignInResponse map(SignInInternalResponse input);
 
     @Mappings({@Mapping(target = "data", source = "user"),})
     UserServiceProto.UserDetailsResponse map(UserDetailsInternalResponse input);

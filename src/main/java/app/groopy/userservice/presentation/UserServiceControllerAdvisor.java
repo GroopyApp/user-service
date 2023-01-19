@@ -1,9 +1,13 @@
 package app.groopy.userservice.presentation;
 
+import app.groopy.userservice.domain.exceptions.SignUpException;
+import app.groopy.userservice.domain.exceptions.AuthenticationValidationException;
 import app.groopy.userservice.presentation.mapper.PresentationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import app.groopy.protobuf.UserServiceProto;
 
 @ControllerAdvice
 public class UserServiceControllerAdvisor extends ResponseEntityExceptionHandler {
@@ -11,13 +15,23 @@ public class UserServiceControllerAdvisor extends ResponseEntityExceptionHandler
     @Autowired
     private PresentationMapper mapper;
 
-//    @ExceptionHandler(CreateRoomValuesValidationException.class)
-//    public ResponseEntity<RoomServiceProto.ErrorResponse> handle(
-//            CreateRoomValuesValidationException ex, WebRequest request) {
-//
-//        RoomServiceProto.ErrorResponse response = RoomServiceProto.ErrorResponse.newBuilder()
-//                .setDescription(ex.getLocalizedMessage()).build();
-//
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
+    @ExceptionHandler(AuthenticationValidationException.class)
+    public ResponseEntity<UserServiceProto.ErrorResponse> handle(
+            AuthenticationValidationException ex, WebRequest request) {
+
+        UserServiceProto.ErrorResponse response = UserServiceProto.ErrorResponse.newBuilder()
+                .setErrorMessage(ex.getLocalizedMessage()).build();
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(SignUpException.class)
+    public ResponseEntity<UserServiceProto.ErrorResponse> handle(
+            SignUpException ex, WebRequest request) {
+
+        UserServiceProto.ErrorResponse response = UserServiceProto.ErrorResponse.newBuilder()
+                .setErrorMessage(ex.getLocalizedMessage()).build();
+
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

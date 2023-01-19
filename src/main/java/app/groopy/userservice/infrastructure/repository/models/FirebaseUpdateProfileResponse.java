@@ -2,8 +2,6 @@ package app.groopy.userservice.infrastructure.repository.models;
 
 import lombok.Value;
 
-import java.util.List;
-
 @Value
 public class FirebaseUpdateProfileResponse {
     String localId;
