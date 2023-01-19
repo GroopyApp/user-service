@@ -1,19 +1,18 @@
-package app.groopy.userservice.infrastructure.services;
+package app.groopy.userservice.infrastructure.providers;
 
-import app.groopy.userservice.application.mapper.ApplicationMapper;
 import app.groopy.userservice.domain.models.common.UserDetails;
+import app.groopy.userservice.infrastructure.mapper.InfrastructureMapper;
 import app.groopy.userservice.infrastructure.repository.ESUserRepository;
 import app.groopy.userservice.infrastructure.repository.exceptions.ElasticsearchServiceException;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class ElasticsearchUserService {
+@Repository //This must be marked as a repository for elasticsearch limitations
+public class ElasticsearchProvider {
 
     @Autowired
-    private ApplicationMapper mapper;
+    private InfrastructureMapper mapper;
 
     @Autowired
     private ESUserRepository esUserRepository;

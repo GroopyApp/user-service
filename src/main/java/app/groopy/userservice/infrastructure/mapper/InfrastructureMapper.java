@@ -1,4 +1,4 @@
-package app.groopy.userservice.application.mapper;
+package app.groopy.userservice.infrastructure.mapper;
 
 import app.groopy.userservice.domain.models.common.UserDetails;
 import app.groopy.userservice.infrastructure.repository.models.ESUserEntity;
@@ -8,7 +8,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
 @Mapper(componentModel = "spring", collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED)
-public interface ApplicationMapper {
+public interface InfrastructureMapper {
 
     //TODO remove these mappings or adjust them
     @Mappings({
