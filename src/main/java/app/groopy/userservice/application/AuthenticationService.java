@@ -8,8 +8,8 @@ import app.groopy.userservice.domain.models.SignInInternalRequest;
 import app.groopy.userservice.domain.models.SignInInternalResponse;
 import app.groopy.userservice.domain.models.SignUpInternalRequest;
 import app.groopy.userservice.domain.models.SignUpInternalResponse;
+import app.groopy.userservice.infrastructure.providers.ElasticsearchProvider;
 import app.groopy.userservice.infrastructure.services.AuthServiceProvider;
-import app.groopy.userservice.infrastructure.services.ElasticsearchUserService;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,16 +23,16 @@ public class AuthenticationService {
 
     private final AuthenticationValidator validator;
     private final AuthServiceProvider authServiceProvider;
-    private final ElasticsearchUserService elasticsearchUserService;
+    private final ElasticsearchProvider elasticsearchProvider;
 
     @Autowired
     public AuthenticationService(
             AuthenticationValidator validator,
             AuthServiceProvider authServiceProvider,
-            ElasticsearchUserService elasticsearchUserService) {
+            ElasticsearchProvider elasticsearchProvider) {
         this.validator = validator;
         this.authServiceProvider = authServiceProvider;
-        this.elasticsearchUserService = elasticsearchUserService;
+        this.elasticsearchProvider = elasticsearchProvider;
     }
 
     @SneakyThrows({AuthenticationValidationException.class, SignUpException.class})
@@ -41,7 +41,7 @@ public class AuthenticationService {
         try {
             SignUpInternalResponse response = authServiceProvider.signUp(request);
             try {
-                elasticsearchUserService.save(response.getUser());
+                elasticsearchProvider.save(response.getUser());
             } catch (Throwable ex) {
                 LOGGER.error(
                         String.format("An error occurred trying to save user in ESDB, user registration will be rolled back: request:{%s}, error:{%s",
