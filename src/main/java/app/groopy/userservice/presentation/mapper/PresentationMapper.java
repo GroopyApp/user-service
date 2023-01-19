@@ -2,7 +2,7 @@ package app.groopy.userservice.presentation.mapper;
 
 import app.groopy.protobuf.UserServiceProto;
 import app.groopy.userservice.domain.models.*;
-import app.groopy.userservice.domain.models.common.UserDetails;
+import app.groopy.userservice.domain.models.common.UserDetailsDto;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring",
@@ -10,18 +10,18 @@ import org.mapstruct.*;
         collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED)
 public interface PresentationMapper {
 
-    SignUpInternalRequest map(UserServiceProto.SignUpRequest input);
+    SignUpRequestDto map(UserServiceProto.SignUpRequest input);
 
-    SignInInternalRequest map(UserServiceProto.SignInRequest input);
-
-    @Mappings({@Mapping(target = "data", source = "user")})
-    UserServiceProto.SignUpResponse map(SignUpInternalResponse input);
+    SignInRequestDto map(UserServiceProto.SignInRequest input);
 
     @Mappings({@Mapping(target = "data", source = "user")})
-    UserServiceProto.SignInResponse map(SignInInternalResponse input);
+    UserServiceProto.SignUpResponse map(SignUpResponseDto input);
+
+    @Mappings({@Mapping(target = "data", source = "user")})
+    UserServiceProto.SignInResponse map(SignInResponseDto input);
 
     @Mappings({@Mapping(target = "data", source = "user"),})
-    UserServiceProto.UserDetailsResponse map(UserDetailsInternalResponse input);
+    UserServiceProto.UserDetailsResponse map(UserDetailsResponseDto input);
 
-    UserServiceProto.UserDetails map(UserDetails input);
+    UserServiceProto.UserDetails map(UserDetailsDto input);
 }

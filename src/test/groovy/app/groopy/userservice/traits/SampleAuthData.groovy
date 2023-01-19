@@ -1,14 +1,15 @@
 package app.groopy.userservice.traits
 
-import app.groopy.userservice.domain.models.SignInInternalRequest
-import app.groopy.userservice.domain.models.SignInInternalResponse
-import app.groopy.userservice.domain.models.SignUpInternalRequest
-import app.groopy.userservice.domain.models.SignUpInternalResponse
-import app.groopy.userservice.domain.models.common.UserDetails
+
+import app.groopy.userservice.domain.models.SignInResponseDto
+import app.groopy.userservice.domain.models.SignInRequestDto
+import app.groopy.userservice.domain.models.SignUpRequestDto
+import app.groopy.userservice.domain.models.SignUpResponseDto
+import app.groopy.userservice.domain.models.common.UserDetailsDto
 
 trait SampleAuthData {
 
-    SignUpInternalRequest sampleSignUpRequest(Map params = [:]) {
+    SignUpRequestDto sampleSignUpRequest(Map params = [:]) {
         def defaultParams = [
                 username: "test_username",
                 email: "test@test.com",
@@ -16,43 +17,43 @@ trait SampleAuthData {
                 photoUrl: "http://www.example.com",
         ]
 
-        new SignUpInternalRequest.SignUpInternalRequestBuilder(defaultParams + params).build()
+        new SignUpRequestDto.SignUpRequestDtoBuilder(defaultParams + params).build()
     }
 
-    SignUpInternalResponse sampleSignUpResponse(Map params = [:]) {
+    SignUpResponseDto sampleSignUpResponse(Map params = [:]) {
         def defaultParams = [
                 user: sampleUserDetails(),
                 token: "1234567890abcdefg",
         ]
 
-        new SignUpInternalResponse.SignUpInternalResponseBuilder(defaultParams + params).build()
+        new SignUpResponseDto.SignUpResponseDtoBuilder(defaultParams + params).build()
     }
 
-    SignInInternalRequest sampleSignInRequest(Map params = [:]) {
+    SignInRequestDto sampleSignInRequest(Map params = [:]) {
         def defaultParams = [
                 email: "test@test.com",
                 password: "testPassword",
         ]
 
-        new SignInInternalRequest.SignInInternalRequestBuilder(defaultParams + params).build()
+        new SignInRequestDto.SignInRequestDtoBuilder(defaultParams + params).build()
     }
 
-    SignInInternalResponse sampleSignInResponse(Map params = [:]) {
+    SignInResponseDto sampleSignInResponse(Map params = [:]) {
         def defaultParams = [
                 user: sampleUserDetails(),
                 token: "1234567890abcdefg",
         ]
 
-        new SignInInternalResponse.SignInInternalResponseBuilder(defaultParams + params).build()
+        new SignInResponseDto.SignInResponseDtoBuilder(defaultParams + params).build()
     }
 
-    UserDetails sampleUserDetails(Map params = [:]) {
+    UserDetailsDto sampleUserDetails(Map params = [:]) {
         def defaultParams = [
                 userId: "test_username",
                 email: "test@test.com",
         ]
 
-        new UserDetails.UserDetailsBuilder(defaultParams + params).build()
+        new UserDetailsDto.UserDetailsDtoBuilder(defaultParams + params).build()
     }
 
 }

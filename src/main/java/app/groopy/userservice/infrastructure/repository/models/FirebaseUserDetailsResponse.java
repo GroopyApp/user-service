@@ -1,12 +1,12 @@
 package app.groopy.userservice.infrastructure.repository.models;
 
-import app.groopy.userservice.domain.models.common.UserDetails;
+import app.groopy.userservice.domain.models.common.UserDetailsDto;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
 public class FirebaseUserDetailsResponse {
-    UserDetails response;
+    UserDetailsDto response;
     String token;
 }

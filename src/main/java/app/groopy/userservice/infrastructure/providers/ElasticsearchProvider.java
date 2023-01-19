@@ -1,6 +1,6 @@
 package app.groopy.userservice.infrastructure.providers;
 
-import app.groopy.userservice.domain.models.common.UserDetails;
+import app.groopy.userservice.domain.models.common.UserDetailsDto;
 import app.groopy.userservice.infrastructure.mapper.InfrastructureMapper;
 import app.groopy.userservice.infrastructure.repository.ESUserRepository;
 import app.groopy.userservice.infrastructure.repository.exceptions.ElasticsearchServiceException;
@@ -18,7 +18,7 @@ public class ElasticsearchProvider {
     private ESUserRepository esUserRepository;
 
     @SneakyThrows
-    public void save(UserDetails user) {
+    public void save(UserDetailsDto user) {
         try {
             esUserRepository.save(mapper.map(user));
         } catch (Exception ex) {

@@ -1,15 +1,15 @@
 package app.groopy.userservice.infrastructure.services;
 
-import app.groopy.userservice.domain.models.SignInInternalRequest;
-import app.groopy.userservice.domain.models.SignInInternalResponse;
-import app.groopy.userservice.domain.models.SignUpInternalRequest;
-import app.groopy.userservice.domain.models.SignUpInternalResponse;
+import app.groopy.userservice.domain.models.SignInRequestDto;
+import app.groopy.userservice.domain.models.SignInResponseDto;
+import app.groopy.userservice.domain.models.SignUpRequestDto;
+import app.groopy.userservice.domain.models.SignUpResponseDto;
 
 public interface AuthServiceProvider {
 
-    SignInInternalResponse signIn(SignInInternalRequest request);
+    SignInResponseDto signIn(SignInRequestDto request);
 
-    SignUpInternalResponse signUp(SignUpInternalRequest request);
+    SignUpResponseDto signUp(SignUpRequestDto request);
 
     void deleteUser(String email);
 

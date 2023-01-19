@@ -1,12 +1,12 @@
 package app.groopy.userservice.infrastructure.providers;
 
+import app.groopy.userservice.domain.models.SignInResponseDto;
+import app.groopy.userservice.domain.models.SignUpResponseDto;
+import app.groopy.userservice.domain.models.common.UserDetailsDto;
 import app.groopy.userservice.infrastructure.repository.exceptions.FirebaseAuthException;
 import app.groopy.userservice.infrastructure.repository.exceptions.FirebaseUserProfileException;
-import app.groopy.userservice.domain.models.SignInInternalRequest;
-import app.groopy.userservice.domain.models.SignInInternalResponse;
-import app.groopy.userservice.domain.models.SignUpInternalRequest;
-import app.groopy.userservice.domain.models.SignUpInternalResponse;
-import app.groopy.userservice.domain.models.common.UserDetails;
+import app.groopy.userservice.domain.models.SignInRequestDto;
+import app.groopy.userservice.domain.models.SignUpRequestDto;
 import app.groopy.userservice.infrastructure.repository.FirebaseRepository;
 import app.groopy.userservice.infrastructure.repository.models.*;
 import app.groopy.userservice.infrastructure.services.AuthServiceProvider;
@@ -61,7 +61,7 @@ public class FirebaseProvider implements AuthServiceProvider {
     }
 
     @SneakyThrows
-    public SignInInternalResponse signIn(SignInInternalRequest request) {
+    public SignInResponseDto signIn(SignInRequestDto request) {
         Response<FirebaseSignInResponse> signInResponse = firebaseRepository.signIn(FirebaseSignInRequest.builder()
                 .email(request.getEmail())
                 .password(request.getPassword())
@@ -74,14 +74,14 @@ public class FirebaseProvider implements AuthServiceProvider {
 
         FirebaseUserDetailsResponse entity = getUserDetails(signInResponse.body().getIdToken());
 
-        return SignInInternalResponse.builder()
+        return SignInResponseDto.builder()
                 .user(entity.getResponse())
                 .token(entity.getToken())
                 .build();
     }
 
     @SneakyThrows
-    public SignUpInternalResponse signUp(SignUpInternalRequest request) {
+    public SignUpResponseDto signUp(SignUpRequestDto request) {
         Response<FirebaseSignUpResponse> signUpResponse = firebaseRepository.signUp(FirebaseSignUpRequest.builder()
                         .email(request.getEmail())
                         .password(request.getPassword())
@@ -93,7 +93,7 @@ public class FirebaseProvider implements AuthServiceProvider {
 
         try {
             FirebaseUserDetailsResponse entity = updateUserDetails(signUpResponse.body().getIdToken(), request.getUsername(), request.getPhotoUrl());
-            return SignUpInternalResponse.builder()
+            return SignUpResponseDto.builder()
                     .user(entity.getResponse())
                     .localId(signUpResponse.body().getLocalId())
                     .token(entity.getToken())
@@ -138,7 +138,7 @@ public class FirebaseProvider implements AuthServiceProvider {
         FirebaseUserProfileResponse.User entity = lookupProfileResponse.body().getUsers().get(0);
 
         return FirebaseUserDetailsResponse.builder()
-                .response(UserDetails.builder()
+                .response(UserDetailsDto.builder()
                                 .userId(entity.getDisplayName())
                                 .email(entity.getEmail())
                         //TODO add other fields
@@ -164,7 +164,7 @@ public class FirebaseProvider implements AuthServiceProvider {
         FirebaseUpdateProfileResponse entity = updateProfileResponse.body();
 
         return FirebaseUserDetailsResponse.builder()
-                .response(UserDetails.builder()
+                .response(UserDetailsDto.builder()
                         .userId(entity.getDisplayName())
                         .email(entity.getEmail())
                         //TODO add other fields

@@ -3,8 +3,8 @@ package app.groopy.userservice.application;
 import app.groopy.userservice.application.validators.AuthenticationValidator;
 import app.groopy.userservice.domain.exceptions.AuthenticationValidationException;
 import app.groopy.userservice.domain.exceptions.SignInException;
-import app.groopy.userservice.domain.models.SignInInternalRequest;
-import app.groopy.userservice.domain.models.SignInInternalResponse;
+import app.groopy.userservice.domain.models.SignInRequestDto;
+import app.groopy.userservice.domain.models.SignInResponseDto;
 import app.groopy.userservice.infrastructure.providers.ElasticsearchProvider;
 import app.groopy.userservice.infrastructure.services.AuthServiceProvider;
 import lombok.SneakyThrows;
@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SignInService extends AuthenticationService<SignInInternalRequest, SignInInternalResponse> {
+public class SignInService extends AuthenticationService<SignInRequestDto, SignInResponseDto> {
 
     private final Logger LOGGER = LoggerFactory.getLogger(SignInService.class);
 
@@ -27,7 +27,7 @@ public class SignInService extends AuthenticationService<SignInInternalRequest, 
     }
 
     @SneakyThrows({AuthenticationValidationException.class, SignInException.class})
-    public SignInInternalResponse perform(SignInInternalRequest request) {
+    public SignInResponseDto perform(SignInRequestDto request) {
         validator.validate(request);
         try {
             //TODO send user status update to ES

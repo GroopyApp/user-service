@@ -2,12 +2,9 @@ package app.groopy.userservice.application;
 
 import app.groopy.userservice.application.validators.AuthenticationValidator;
 import app.groopy.userservice.domain.exceptions.AuthenticationValidationException;
-import app.groopy.userservice.domain.exceptions.SignInException;
 import app.groopy.userservice.domain.exceptions.SignUpException;
-import app.groopy.userservice.domain.models.SignInInternalRequest;
-import app.groopy.userservice.domain.models.SignInInternalResponse;
-import app.groopy.userservice.domain.models.SignUpInternalRequest;
-import app.groopy.userservice.domain.models.SignUpInternalResponse;
+import app.groopy.userservice.domain.models.SignUpRequestDto;
+import app.groopy.userservice.domain.models.SignUpResponseDto;
 import app.groopy.userservice.infrastructure.providers.ElasticsearchProvider;
 import app.groopy.userservice.infrastructure.services.AuthServiceProvider;
 import lombok.SneakyThrows;
@@ -17,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SignUpService extends AuthenticationService<SignUpInternalRequest, SignUpInternalResponse> {
+public class SignUpService extends AuthenticationService<SignUpRequestDto, SignUpResponseDto> {
 
     private final Logger LOGGER = LoggerFactory.getLogger(SignUpService.class);
 
@@ -30,10 +27,10 @@ public class SignUpService extends AuthenticationService<SignUpInternalRequest, 
     }
 
     @SneakyThrows({AuthenticationValidationException.class, SignUpException.class})
-    public SignUpInternalResponse perform(SignUpInternalRequest request) {
+    public SignUpResponseDto perform(SignUpRequestDto request) {
         validator.validate(request);
         try {
-            SignUpInternalResponse response = authServiceProvider.signUp(request);
+            SignUpResponseDto response = authServiceProvider.signUp(request);
             try {
                 elasticsearchProvider.save(response.getUser());
             } catch (Throwable ex) {

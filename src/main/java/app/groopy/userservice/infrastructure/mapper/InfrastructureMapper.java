@@ -1,6 +1,6 @@
 package app.groopy.userservice.infrastructure.mapper;
 
-import app.groopy.userservice.domain.models.common.UserDetails;
+import app.groopy.userservice.domain.models.common.UserDetailsDto;
 import app.groopy.userservice.infrastructure.repository.models.ESUserEntity;
 import org.mapstruct.CollectionMappingStrategy;
 import org.mapstruct.Mapper;
@@ -16,5 +16,5 @@ public interface InfrastructureMapper {
             @Mapping(target = "surname", ignore = true),
             @Mapping(target = "subscribedRooms", ignore = true)
     })
-    ESUserEntity map(UserDetails input);
+    ESUserEntity map(UserDetailsDto input);
 }
