@@ -73,6 +73,7 @@ public class FirebaseProvider implements AuthenticationProvider {
 
         FirebaseUserDetailsResponse entity = getUserDetails(signInResponse.body().getIdToken());
 
+        //FIXME This should be built with the infrastructure mapper
         return SignInResponseDto.builder()
                 .user(entity.getResponse())
                 .token(entity.getToken())
@@ -92,6 +93,8 @@ public class FirebaseProvider implements AuthenticationProvider {
 
         try {
             FirebaseUserDetailsResponse entity = updateUserDetails(signUpResponse.body().getIdToken(), request.getUsername(), request.getPhotoUrl());
+
+            //FIXME This should be built with the infrastructure mapper
             return SignUpResponseDto.builder()
                     .user(entity.getResponse())
                     .localId(signUpResponse.body().getLocalId())

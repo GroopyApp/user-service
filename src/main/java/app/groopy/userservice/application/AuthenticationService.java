@@ -10,14 +10,13 @@ public abstract class AuthenticationService<I, O> {
     protected final AuthenticationProvider authenticationProvider;
     protected final ElasticsearchProvider elasticsearchProvider;
 
-
     protected AuthenticationService(AuthenticationValidator validator, AuthenticationProvider authenticationProvider, ElasticsearchProvider elasticsearchProvider) {
         this.validator = validator;
         this.authenticationProvider = authenticationProvider;
         this.elasticsearchProvider = elasticsearchProvider;
     }
 
-    public abstract O perform(I i);
+    public abstract O perform(I inputRequest);
 
 
     //FIXME DEV USE ONLY, REMOVE IT
