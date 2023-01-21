@@ -37,7 +37,7 @@ configurations {
 
 
 dependencies {
-	implementation 'app.groopy:groopy-commons:1.0.1'
+	implementation 'app.groopy:groopy-commons:1.0.4'
 
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-data-rest'

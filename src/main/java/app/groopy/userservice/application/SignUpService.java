@@ -9,6 +9,8 @@ import app.groopy.userservice.domain.models.SignUpRequestDto;
 import app.groopy.userservice.domain.models.SignUpResponseDto;
 import app.groopy.userservice.infrastructure.AuthenticationInfrastructureService;
 import app.groopy.userservice.infrastructure.ElasticsearchInfrastructureService;
+import app.groopy.userservice.infrastructure.exceptions.AuthenticationServiceException;
+import app.groopy.userservice.infrastructure.exceptions.ElasticsearchServiceException;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,17 +43,21 @@ public class SignUpService extends AuthenticationService<SignUpRequestDto, SignU
                     .build()));
             try {
                 elasticsearchInfrastructureService.save(response.getUser());
-            } catch (Throwable ex) {
+            } catch (ElasticsearchServiceException ex) {
                 LOGGER.error(
                         String.format("An error occurred trying to save user in ESDB, user registration will be rolled back: request:{%s}, error:{%s",
                                 request,
                                 ex.getLocalizedMessage()));
-                authenticationInfrastructureService.deleteUser(response.getLocalId());
+                try {
+                    authenticationInfrastructureService.deleteUser(response.getLocalId());
+                } catch (AuthenticationServiceException e) {
+                    LOGGER.error(String.format("An error occurred trying to delete the user that was saved in firebase but not in elasticsearch. A manual operation will be required for it: user localId: %s", response.getLocalId()));
+                }
                 throw new SignUpException(request, ex.getLocalizedMessage());
             }
             return response;
-        } catch (Exception ex) {
-            throw new SignUpException(request, ex.getLocalizedMessage());
+        } catch (AuthenticationServiceException e) {
+            throw new SignUpException(request, e.getLocalizedMessage());
         }
     }
 }

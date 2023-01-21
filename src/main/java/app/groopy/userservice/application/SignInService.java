@@ -9,6 +9,7 @@ import app.groopy.userservice.domain.models.SignInRequestDto;
 import app.groopy.userservice.domain.models.SignInResponseDto;
 import app.groopy.userservice.infrastructure.AuthenticationInfrastructureService;
 import app.groopy.userservice.infrastructure.ElasticsearchInfrastructureService;
+import app.groopy.userservice.infrastructure.exceptions.AuthenticationServiceException;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,8 @@ public class SignInService extends AuthenticationService<SignInRequestDto, SignI
                             .email(request.getEmail())
                             .password(request.getPassword())
                     .build()));
-        } catch (Exception ex) {
+        } catch (AuthenticationServiceException ex) {
+            LOGGER.error(String.format("an error occurred trying to login user with email %s", request.getEmail()), ex);
             throw new SignInException(request, ex.getLocalizedMessage());
         }
     }
