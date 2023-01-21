@@ -8,6 +8,6 @@ import lombok.Data;
 @Builder
 public class SignUpResponseDto {
     private UserDetailsDto user;
-    private String localId;
     private String token;
+    private String localId;
 }

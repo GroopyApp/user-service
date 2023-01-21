@@ -1,12 +1,14 @@
 package app.groopy.userservice.application;
 
+import app.groopy.commons.infrastructure.repository.models.firebase.AuthenticationSignUpRequest;
+import app.groopy.userservice.application.mapper.ApplicationMapper;
 import app.groopy.userservice.application.validators.AuthenticationValidator;
 import app.groopy.userservice.domain.exceptions.AuthenticationValidationException;
 import app.groopy.userservice.domain.exceptions.SignUpException;
 import app.groopy.userservice.domain.models.SignUpRequestDto;
 import app.groopy.userservice.domain.models.SignUpResponseDto;
-import app.groopy.userservice.infrastructure.providers.AuthenticationProvider;
-import app.groopy.userservice.infrastructure.providers.ElasticsearchProvider;
+import app.groopy.userservice.infrastructure.AuthenticationInfrastructureService;
+import app.groopy.userservice.infrastructure.ElasticsearchInfrastructureService;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,24 +23,30 @@ public class SignUpService extends AuthenticationService<SignUpRequestDto, SignU
     @Autowired
     public SignUpService(
             AuthenticationValidator validator,
-            AuthenticationProvider authenticationProvider,
-            ElasticsearchProvider elasticsearchProvider) {
-        super(validator, authenticationProvider, elasticsearchProvider);
+            ApplicationMapper mapper,
+            AuthenticationInfrastructureService authenticationInfrastructureService,
+            ElasticsearchInfrastructureService elasticsearchInfrastructureService) {
+        super(validator, mapper, authenticationInfrastructureService, elasticsearchInfrastructureService);
     }
 
     @SneakyThrows({AuthenticationValidationException.class, SignUpException.class})
     public SignUpResponseDto perform(SignUpRequestDto request) {
         validator.validate(request);
         try {
-            SignUpResponseDto response = authenticationProvider.signUp(request);
+            SignUpResponseDto response = mapper.map(authenticationInfrastructureService.signUp(AuthenticationSignUpRequest.builder()
+                            .email(request.getEmail())
+                            .password(request.getPassword())
+                            .username(request.getUsername())
+                            .photoUrl(request.getPhotoUrl())
+                    .build()));
             try {
-                elasticsearchProvider.save(response.getUser());
+                elasticsearchInfrastructureService.save(response.getUser());
             } catch (Throwable ex) {
                 LOGGER.error(
                         String.format("An error occurred trying to save user in ESDB, user registration will be rolled back: request:{%s}, error:{%s",
                                 request,
                                 ex.getLocalizedMessage()));
-                authenticationProvider.deleteUser(response.getLocalId());
+                authenticationInfrastructureService.deleteUser(response.getLocalId());
                 throw new SignUpException(request, ex.getLocalizedMessage());
             }
             return response;

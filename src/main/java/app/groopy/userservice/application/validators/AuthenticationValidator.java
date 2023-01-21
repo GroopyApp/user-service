@@ -3,7 +3,7 @@ package app.groopy.userservice.application.validators;
 import app.groopy.userservice.domain.exceptions.AuthenticationValidationException;
 import app.groopy.userservice.domain.models.SignInRequestDto;
 import app.groopy.userservice.domain.models.SignUpRequestDto;
-import app.groopy.userservice.infrastructure.providers.ElasticsearchProvider;
+import app.groopy.userservice.infrastructure.ElasticsearchInfrastructureService;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class AuthenticationValidator {
 
     @Autowired
-    private ElasticsearchProvider elasticsearchProvider;
+    private ElasticsearchInfrastructureService elasticsearchInfrastructureService;
 
     private static final EmailValidator EMAIL_VALIDATOR = EmailValidator.getInstance();
 

@@ -1,19 +1,25 @@
 package app.groopy.userservice.application;
 
+import app.groopy.userservice.application.mapper.ApplicationMapper;
 import app.groopy.userservice.application.validators.AuthenticationValidator;
-import app.groopy.userservice.infrastructure.providers.AuthenticationProvider;
-import app.groopy.userservice.infrastructure.providers.ElasticsearchProvider;
+import app.groopy.userservice.infrastructure.AuthenticationInfrastructureService;
+import app.groopy.userservice.infrastructure.ElasticsearchInfrastructureService;
 
 public abstract class AuthenticationService<I, O> {
 
     protected final AuthenticationValidator validator;
-    protected final AuthenticationProvider authenticationProvider;
-    protected final ElasticsearchProvider elasticsearchProvider;
+    protected final ApplicationMapper mapper;
+    protected final AuthenticationInfrastructureService authenticationInfrastructureService;
+    protected final ElasticsearchInfrastructureService elasticsearchInfrastructureService;
 
-    protected AuthenticationService(AuthenticationValidator validator, AuthenticationProvider authenticationProvider, ElasticsearchProvider elasticsearchProvider) {
+    protected AuthenticationService(AuthenticationValidator validator,
+                                    ApplicationMapper mapper,
+                                    AuthenticationInfrastructureService authenticationInfrastructureService,
+                                    ElasticsearchInfrastructureService elasticsearchInfrastructureService) {
         this.validator = validator;
-        this.authenticationProvider = authenticationProvider;
-        this.elasticsearchProvider = elasticsearchProvider;
+        this.mapper = mapper;
+        this.authenticationInfrastructureService = authenticationInfrastructureService;
+        this.elasticsearchInfrastructureService = elasticsearchInfrastructureService;
     }
 
     public abstract O perform(I inputRequest);
@@ -21,6 +27,6 @@ public abstract class AuthenticationService<I, O> {
 
     //FIXME DEV USE ONLY, REMOVE IT
     public void deleteAllUsers() {
-        authenticationProvider.deleteAllUsers();
+        authenticationInfrastructureService.deleteAllUsers();
     }
 }

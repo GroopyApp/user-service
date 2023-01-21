@@ -1,12 +1,14 @@
 package app.groopy.userservice.application;
 
+import app.groopy.commons.infrastructure.repository.models.firebase.AuthenticationSignInRequest;
+import app.groopy.userservice.application.mapper.ApplicationMapper;
 import app.groopy.userservice.application.validators.AuthenticationValidator;
 import app.groopy.userservice.domain.exceptions.AuthenticationValidationException;
 import app.groopy.userservice.domain.exceptions.SignInException;
 import app.groopy.userservice.domain.models.SignInRequestDto;
 import app.groopy.userservice.domain.models.SignInResponseDto;
-import app.groopy.userservice.infrastructure.providers.AuthenticationProvider;
-import app.groopy.userservice.infrastructure.providers.ElasticsearchProvider;
+import app.groopy.userservice.infrastructure.AuthenticationInfrastructureService;
+import app.groopy.userservice.infrastructure.ElasticsearchInfrastructureService;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +23,10 @@ public class SignInService extends AuthenticationService<SignInRequestDto, SignI
     @Autowired
     public SignInService(
             AuthenticationValidator validator,
-            AuthenticationProvider authenticationProvider,
-            ElasticsearchProvider elasticsearchProvider) {
-        super(validator, authenticationProvider, elasticsearchProvider);
+            ApplicationMapper mapper,
+            AuthenticationInfrastructureService authenticationInfrastructureService,
+            ElasticsearchInfrastructureService elasticsearchInfrastructureService) {
+        super(validator, mapper, authenticationInfrastructureService, elasticsearchInfrastructureService);
     }
 
     @SneakyThrows({AuthenticationValidationException.class, SignInException.class})
@@ -31,7 +34,10 @@ public class SignInService extends AuthenticationService<SignInRequestDto, SignI
         validator.validate(request);
         try {
             //TODO send user status update to ES
-            return authenticationProvider.signIn(request);
+            return mapper.map(authenticationInfrastructureService.signIn(AuthenticationSignInRequest.builder()
+                            .email(request.getEmail())
+                            .password(request.getPassword())
+                    .build()));
         } catch (Exception ex) {
             throw new SignInException(request, ex.getLocalizedMessage());
         }

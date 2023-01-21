@@ -7,5 +7,8 @@ import lombok.Data;
 @Builder
 public class UserDetailsDto {
     String userId;
+    String name;
+    String surname;
     String email;
+    String photoUrl;
 }
