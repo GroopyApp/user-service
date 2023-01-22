@@ -1,12 +1,12 @@
 package app.groopy.userservice.infrastructure;
 
-import app.groopy.commons.infrastructure.providers.AuthenticationProvider;
-import app.groopy.commons.infrastructure.providers.exceptions.FirebaseOperationError;
-import app.groopy.commons.infrastructure.providers.exceptions.FirebaseProviderException;
-import app.groopy.commons.infrastructure.repository.models.firebase.AuthenticationSignInRequest;
-import app.groopy.commons.infrastructure.repository.models.firebase.AuthenticationSignInResponse;
-import app.groopy.commons.infrastructure.repository.models.firebase.AuthenticationSignUpRequest;
-import app.groopy.commons.infrastructure.repository.models.firebase.AuthenticationSignUpResponse;
+import app.groopy.providers.firebase.AuthenticationProvider;
+import app.groopy.providers.firebase.exceptions.FirebaseOperationError;
+import app.groopy.providers.firebase.exceptions.FirebaseProviderException;
+import app.groopy.providers.firebase.models.AuthenticationSignInRequest;
+import app.groopy.providers.firebase.models.AuthenticationSignInResponse;
+import app.groopy.providers.firebase.models.AuthenticationSignUpRequest;
+import app.groopy.providers.firebase.models.AuthenticationSignUpResponse;
 import app.groopy.userservice.infrastructure.exceptions.AuthenticationServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

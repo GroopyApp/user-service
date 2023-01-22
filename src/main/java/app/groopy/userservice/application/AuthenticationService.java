@@ -2,8 +2,11 @@ package app.groopy.userservice.application;
 
 import app.groopy.userservice.application.mapper.ApplicationMapper;
 import app.groopy.userservice.application.validators.AuthenticationValidator;
+import app.groopy.userservice.domain.exceptions.GenericException;
 import app.groopy.userservice.infrastructure.AuthenticationInfrastructureService;
 import app.groopy.userservice.infrastructure.ElasticsearchInfrastructureService;
+import app.groopy.userservice.infrastructure.exceptions.AuthenticationServiceException;
+import lombok.SneakyThrows;
 
 public abstract class AuthenticationService<I, O> {
 
@@ -24,9 +27,12 @@ public abstract class AuthenticationService<I, O> {
 
     public abstract O perform(I inputRequest);
 
-
-    //FIXME DEV USE ONLY, REMOVE IT
+    @SneakyThrows
     public void deleteAllUsers() {
-        authenticationInfrastructureService.deleteAllUsers();
+        try {
+            authenticationInfrastructureService.deleteAllUsers();
+        } catch (AuthenticationServiceException e) {
+            throw new GenericException(e.getLocalizedMessage());
+        }
     }
 }

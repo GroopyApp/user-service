@@ -1,6 +1,6 @@
 package app.groopy.userservice.application;
 
-import app.groopy.commons.infrastructure.repository.models.firebase.AuthenticationSignUpRequest;
+import app.groopy.providers.firebase.models.AuthenticationSignUpRequest;
 import app.groopy.userservice.application.mapper.ApplicationMapper;
 import app.groopy.userservice.application.validators.AuthenticationValidator;
 import app.groopy.userservice.domain.exceptions.AuthenticationValidationException;

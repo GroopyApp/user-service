@@ -1,7 +1,6 @@
 package app.groopy.userservice.infrastructure.exceptions;
 
-
-import app.groopy.commons.infrastructure.providers.exceptions.FirebaseOperationError;
+import app.groopy.providers.firebase.exceptions.FirebaseOperationError;
 
 public class AuthenticationServiceException extends Throwable {
 

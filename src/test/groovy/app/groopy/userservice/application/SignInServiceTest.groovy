@@ -1,12 +1,14 @@
 package app.groopy.userservice.application
 
+import app.groopy.providers.firebase.exceptions.FirebaseOperationError
+import app.groopy.userservice.application.mapper.ApplicationMapper
 import app.groopy.userservice.application.validators.AuthenticationValidator
 import app.groopy.userservice.domain.exceptions.AuthenticationValidationException
 import app.groopy.userservice.domain.exceptions.SignInException
-import app.groopy.userservice.domain.exceptions.SignUpException
+import app.groopy.userservice.infrastructure.AuthenticationInfrastructureService
+import app.groopy.userservice.infrastructure.ElasticsearchInfrastructureService
+import app.groopy.userservice.infrastructure.exceptions.AuthenticationServiceException
 import app.groopy.userservice.infrastructure.providers.ElasticsearchProvider
-import app.groopy.userservice.infrastructure.repository.exceptions.ElasticsearchServiceException
-import app.groopy.userservice.infrastructure.repository.exceptions.FirebaseAuthException
 import app.groopy.userservice.infrastructure.services.AuthServiceProvider
 import app.groopy.userservice.traits.SampleAuthData
 import org.spockframework.spring.SpringBean
@@ -18,12 +20,14 @@ class SignInServiceTest extends Specification implements SampleAuthData {
     @SpringBean
     private AuthenticationValidator validator = Mock AuthenticationValidator
     @SpringBean
-    private AuthServiceProvider authServiceProvider = Mock AuthServiceProvider
+    private AuthenticationInfrastructureService authenticationInfrastructureService = Mock AuthServiceProvider
     @SpringBean
-    private ElasticsearchProvider elasticsearchProvider = Mock ElasticsearchProvider
+    private ElasticsearchInfrastructureService elasticsearchInfrastructureService = Mock ElasticsearchProvider
+    @SpringBean
+    private ApplicationMapper applicationMapper = Mock ApplicationMapper
 
     @Subject
-    def testSubject = new SignInService(validator, authServiceProvider, elasticsearchProvider)
+    def testSubject = new SignInService(validator, applicationMapper, authenticationInfrastructureService, elasticsearchInfrastructureService)
 
     def "when a login request is performed and the authProvider and elasticsearch results are ok, a response is returned"() {
 
@@ -32,7 +36,7 @@ class SignInServiceTest extends Specification implements SampleAuthData {
         def providerSignInResponse = sampleSignInResponse()
 
         and:
-        authServiceProvider.signIn(providerSignInRequest) >> providerSignInResponse
+        authenticationInfrastructureService.signIn(providerSignInRequest) >> providerSignInResponse
 
         when:
         def loginResponse = testSubject.perform(providerSignInRequest)
@@ -53,7 +57,7 @@ class SignInServiceTest extends Specification implements SampleAuthData {
         testSubject.perform(providerSignInRequest)
 
         then:
-        0 * authServiceProvider.signIn(_)
+        0 * authenticationInfrastructureService.signIn(_)
         final AuthenticationValidationException _ = thrown()
     }
 
@@ -63,7 +67,7 @@ class SignInServiceTest extends Specification implements SampleAuthData {
         def providerSignInRequest = sampleSignInRequest()
 
         and:
-        authServiceProvider.signIn(providerSignInRequest) >> { throw new FirebaseAuthException("test error") }
+        authenticationInfrastructureService.signIn(providerSignInRequest) >> { throw new AuthenticationServiceException("test error", FirebaseOperationError.UNKNOWN) }
 
         when:
         testSubject.perform(providerSignInRequest)

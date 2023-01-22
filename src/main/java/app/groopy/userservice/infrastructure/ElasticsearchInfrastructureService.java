@@ -1,8 +1,8 @@
 package app.groopy.userservice.infrastructure;
 
-import app.groopy.commons.infrastructure.providers.ElasticsearchProvider;
-import app.groopy.commons.infrastructure.providers.exceptions.ElasticsearchProviderException;
-import app.groopy.commons.infrastructure.repository.models.elasticsearch.entities.UserEntity;
+import app.groopy.providers.elasticsearch.ElasticsearchProvider;
+import app.groopy.providers.elasticsearch.exceptions.ElasticsearchProviderException;
+import app.groopy.providers.elasticsearch.models.entities.UserEntity;
 import app.groopy.userservice.infrastructure.exceptions.ElasticsearchServiceException;
 import app.groopy.userservice.domain.models.common.UserDetailsDto;
 import org.slf4j.Logger;

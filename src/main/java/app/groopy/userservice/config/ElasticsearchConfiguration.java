@@ -11,9 +11,9 @@ import org.springframework.data.elasticsearch.config.AbstractElasticsearchConfig
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 @Configuration
-@EnableElasticsearchRepositories("app.groopy.commons.infrastructure.repository")
-@ComponentScan(basePackages = {"app.groopy.commons.infrastructure.providers"})
-public class ElasticsearchClientConfiguration extends AbstractElasticsearchConfiguration {
+@EnableElasticsearchRepositories("app.groopy.providers.elasticsearch.repository")
+@ComponentScan(basePackages = {"app.groopy.providers.elasticsearch"})
+public class ElasticsearchConfiguration extends AbstractElasticsearchConfiguration {
 
     @Value("${elasticsearch.host}")
     private String host;

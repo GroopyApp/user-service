@@ -1,7 +1,6 @@
 package app.groopy.userservice.infrastructure.exceptions;
 
-
-import app.groopy.commons.infrastructure.providers.exceptions.ElasticsearchOperationError;
+import app.groopy.providers.elasticsearch.exceptions.ElasticsearchOperationError;
 
 public class ElasticsearchServiceException extends Throwable {
 
