@@ -3,6 +3,7 @@ package app.groopy.userservice.infrastructure;
 import app.groopy.providers.elasticsearch.ElasticsearchProvider;
 import app.groopy.providers.elasticsearch.exceptions.ElasticsearchProviderException;
 import app.groopy.providers.elasticsearch.models.entities.UserEntity;
+import app.groopy.providers.firebase.models.commons.UserDetails;
 import app.groopy.userservice.infrastructure.exceptions.ElasticsearchServiceException;
 import app.groopy.userservice.domain.models.common.UserDetailsDto;
 import org.slf4j.Logger;
@@ -22,13 +23,13 @@ public class ElasticsearchInfrastructureService {
         this.provider = provider;
     }
 
-    public void save(UserDetailsDto user) throws ElasticsearchServiceException {
+    public void save(UserDetails user) throws ElasticsearchServiceException {
         try {
             this.provider.save(UserEntity.builder()
-                            .name(user.getName())
+//                            .name(user.getName())
                             .userId(user.getUserId())
                             .subscribedRooms(new ArrayList<>())
-                            .surname(user.getSurname())
+//                            .surname(user.getSurname())
                     .build());
         } catch (ElasticsearchProviderException e) {
             LOGGER.error("An error occurred trying to call elasticsearch", e);

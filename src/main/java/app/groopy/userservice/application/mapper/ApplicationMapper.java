@@ -22,4 +22,6 @@ public interface ApplicationMapper {
 
     SignInResponseDto map(AuthenticationSignInResponse input);
     SignUpResponseDto map(AuthenticationSignUpResponse signUp);
+
+    UserDetails map(UserDetailsDto user);
 }

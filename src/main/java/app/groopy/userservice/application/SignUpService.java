@@ -42,7 +42,7 @@ public class SignUpService extends AuthenticationService<SignUpRequestDto, SignU
                             .photoUrl(request.getPhotoUrl())
                     .build()));
             try {
-                elasticsearchInfrastructureService.save(response.getUser());
+                elasticsearchInfrastructureService.save(mapper.map(response.getUser()));
             } catch (ElasticsearchServiceException ex) {
                 LOGGER.error(
                         String.format("An error occurred trying to save user in ESDB, user registration will be rolled back: request:{%s}, error:{%s",

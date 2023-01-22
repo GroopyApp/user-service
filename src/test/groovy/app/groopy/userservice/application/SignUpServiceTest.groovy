@@ -93,7 +93,7 @@ class SignUpServiceTest extends Specification implements SampleAuthData, SampleD
         authenticationInfrastructureService.signUp(signUpRequest) >> signUpResponse
 
         and:
-        elasticsearchInfrastructureService.save(mapper.map(signUpResponse.user)) >> { throw new ElasticsearchServiceException("test error", ElasticsearchOperationError.UNKNOWN)}
+        elasticsearchInfrastructureService.save(signUpResponse.user) >> { throw new ElasticsearchServiceException("test error", ElasticsearchOperationError.UNKNOWN)}
 
         when:
         testSubject.perform(signUpDtoRequest)
