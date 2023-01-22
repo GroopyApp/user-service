@@ -2,12 +2,12 @@ package app.groopy.userservice.application.validator
 
 import app.groopy.userservice.application.validators.AuthenticationValidator
 import app.groopy.userservice.domain.exceptions.AuthenticationValidationException
-import app.groopy.userservice.traits.SampleAuthData
+import app.groopy.userservice.traits.SampleDtoData
 import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll;
 
-class AuthenticationValidatorTest extends Specification implements SampleAuthData {
+class AuthenticationValidatorTest extends Specification implements SampleDtoData {
 
     @Subject
     def testSubject = new AuthenticationValidator()
@@ -15,10 +15,10 @@ class AuthenticationValidatorTest extends Specification implements SampleAuthDat
     def "when a register request is performed and data are valid no exception is thrown"() {
 
         given:
-        def providerSignUpRequest = sampleSignUpRequest()
+        def signUpDtoRequest = sampleSignUpDtoRequest()
 
         when:
-        testSubject.validate(providerSignUpRequest)
+        testSubject.validate(signUpDtoRequest)
 
         then:
         noExceptionThrown()
@@ -27,10 +27,10 @@ class AuthenticationValidatorTest extends Specification implements SampleAuthDat
     def "when a register request is performed and data contains invalid email an exception is thrown"() {
 
         given:
-        def providerSignUpRequest = sampleSignUpRequest(["email": "invalidEmail.com"])
+        def signUpDtoRequest = sampleSignUpDtoRequest(["email": "invalidEmail.com"])
 
         when:
-        testSubject.validate(providerSignUpRequest)
+        testSubject.validate(signUpDtoRequest)
 
         then:
         final AuthenticationValidationException e = thrown()
@@ -41,10 +41,10 @@ class AuthenticationValidatorTest extends Specification implements SampleAuthDat
     def "when a register request is performed and #testLabel an exception is thrown"() {
 
         given:
-        def providerSignUpRequest = sampleSignUpRequest(customUsername)
+        def signUpDtoRequest = sampleSignUpDtoRequest(customUsername)
 
         when:
-        testSubject.validate(providerSignUpRequest)
+        testSubject.validate(signUpDtoRequest)
 
         then:
         AuthenticationValidationException e = thrown()

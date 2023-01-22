@@ -2,29 +2,29 @@ package app.groopy.userservice.application
 
 import app.groopy.providers.firebase.exceptions.FirebaseOperationError
 import app.groopy.userservice.application.mapper.ApplicationMapper
+import app.groopy.userservice.application.mapper.ApplicationMapperImpl
 import app.groopy.userservice.application.validators.AuthenticationValidator
 import app.groopy.userservice.domain.exceptions.AuthenticationValidationException
 import app.groopy.userservice.domain.exceptions.SignInException
 import app.groopy.userservice.infrastructure.AuthenticationInfrastructureService
 import app.groopy.userservice.infrastructure.ElasticsearchInfrastructureService
 import app.groopy.userservice.infrastructure.exceptions.AuthenticationServiceException
-import app.groopy.userservice.infrastructure.providers.ElasticsearchProvider
-import app.groopy.userservice.infrastructure.services.AuthServiceProvider
 import app.groopy.userservice.traits.SampleAuthData
+import app.groopy.userservice.traits.SampleDtoData
 import org.spockframework.spring.SpringBean
 import spock.lang.Specification
 import spock.lang.Subject
 
-class SignInServiceTest extends Specification implements SampleAuthData {
+class SignInServiceTest extends Specification implements SampleAuthData, SampleDtoData {
 
     @SpringBean
     private AuthenticationValidator validator = Mock AuthenticationValidator
     @SpringBean
-    private AuthenticationInfrastructureService authenticationInfrastructureService = Mock AuthServiceProvider
+    private AuthenticationInfrastructureService authenticationInfrastructureService = Mock AuthenticationInfrastructureService
     @SpringBean
-    private ElasticsearchInfrastructureService elasticsearchInfrastructureService = Mock ElasticsearchProvider
+    private ElasticsearchInfrastructureService elasticsearchInfrastructureService = Mock ElasticsearchInfrastructureService
     @SpringBean
-    private ApplicationMapper applicationMapper = Mock ApplicationMapper
+    private ApplicationMapper applicationMapper = new ApplicationMapperImpl()
 
     @Subject
     def testSubject = new SignInService(validator, applicationMapper, authenticationInfrastructureService, elasticsearchInfrastructureService)
@@ -32,29 +32,31 @@ class SignInServiceTest extends Specification implements SampleAuthData {
     def "when a login request is performed and the authProvider and elasticsearch results are ok, a response is returned"() {
 
         given:
-        def providerSignInRequest = sampleSignInRequest()
-        def providerSignInResponse = sampleSignInResponse()
+        def signInRequest = sampleSignInRequest()
+        def signInResponse = sampleSignInResponse()
+        def signInDtoRequest = sampleSignInDtoRequest()
+        def signInDtoResponse = sampleSignInDtoResponse()
 
         and:
-        authenticationInfrastructureService.signIn(providerSignInRequest) >> providerSignInResponse
+        authenticationInfrastructureService.signIn(signInRequest) >> signInResponse
 
         when:
-        def loginResponse = testSubject.perform(providerSignInRequest)
+        def loginResponse = testSubject.perform(signInDtoRequest)
 
         then:
-        loginResponse == providerSignInResponse
+        loginResponse == signInDtoResponse
     }
 
     def "when a login request is performed and the validation fails, an exception is thrown"() {
 
         given:
-        def providerSignInRequest = sampleSignInRequest()
+        def signInDtoRequest = sampleSignInDtoRequest()
 
         and:
-        validator.validate(providerSignInRequest) >> { throw new AuthenticationValidationException("test error") }
+        validator.validate(signInDtoRequest) >> { throw new AuthenticationValidationException("test error") }
 
         when:
-        testSubject.perform(providerSignInRequest)
+        testSubject.perform(signInDtoRequest)
 
         then:
         0 * authenticationInfrastructureService.signIn(_)
@@ -64,13 +66,14 @@ class SignInServiceTest extends Specification implements SampleAuthData {
     def "when a login request is performed and the authProvider fails, an exception is thrown"() {
 
         given:
-        def providerSignInRequest = sampleSignInRequest()
+        def signInRequest = sampleSignInRequest()
+        def signInDtoRequest = sampleSignInDtoRequest()
 
         and:
-        authenticationInfrastructureService.signIn(providerSignInRequest) >> { throw new AuthenticationServiceException("test error", FirebaseOperationError.UNKNOWN) }
+        authenticationInfrastructureService.signIn(signInRequest) >> { throw new AuthenticationServiceException("test error", FirebaseOperationError.UNKNOWN) }
 
         when:
-        testSubject.perform(providerSignInRequest)
+        testSubject.perform(signInDtoRequest)
 
         then:
         final SignInException _ = thrown()

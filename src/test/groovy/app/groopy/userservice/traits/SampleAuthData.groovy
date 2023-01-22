@@ -5,11 +5,6 @@ import app.groopy.providers.firebase.models.AuthenticationSignInResponse
 import app.groopy.providers.firebase.models.AuthenticationSignUpRequest
 import app.groopy.providers.firebase.models.AuthenticationSignUpResponse
 import app.groopy.providers.firebase.models.commons.UserDetails
-import app.groopy.userservice.domain.models.SignInResponseDto
-import app.groopy.userservice.domain.models.SignInRequestDto
-import app.groopy.userservice.domain.models.SignUpRequestDto
-import app.groopy.userservice.domain.models.SignUpResponseDto
-import app.groopy.userservice.domain.models.common.UserDetailsDto
 
 trait SampleAuthData {
 
