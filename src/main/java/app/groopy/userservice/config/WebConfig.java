@@ -34,6 +34,8 @@ public class WebConfig implements WebMvcConfigurer {
         JsonFormat.TypeRegistry typeRegistry = JsonFormat.TypeRegistry.newBuilder()
                 .add(UserServiceProto.SignUpRequest.getDescriptor())
                 .add(UserServiceProto.SignUpResponse.getDescriptor())
+                .add(UserServiceProto.SignInRequest.getDescriptor())
+                .add(UserServiceProto.SignInResponse.getDescriptor())
                 .add(UserServiceProto.UserDetailsResponse.getDescriptor())
                 .build();
 
