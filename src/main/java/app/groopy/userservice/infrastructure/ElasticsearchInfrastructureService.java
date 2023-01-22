@@ -5,7 +5,6 @@ import app.groopy.providers.elasticsearch.exceptions.ElasticsearchProviderExcept
 import app.groopy.providers.elasticsearch.models.entities.UserEntity;
 import app.groopy.providers.firebase.models.commons.UserDetails;
 import app.groopy.userservice.infrastructure.exceptions.ElasticsearchServiceException;
-import app.groopy.userservice.domain.models.common.UserDetailsDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -26,9 +25,9 @@ public class ElasticsearchInfrastructureService {
     public void save(UserDetails user) throws ElasticsearchServiceException {
         try {
             this.provider.save(UserEntity.builder()
-//                            .name(user.getName())
                             .userId(user.getUserId())
                             .subscribedRooms(new ArrayList<>())
+//                            .name(user.getName())
 //                            .surname(user.getSurname())
                     .build());
         } catch (ElasticsearchProviderException e) {
