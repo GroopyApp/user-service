@@ -24,3 +24,9 @@ firebase:
   authentication:
     host: 'https://identitytoolkit.googleapis.com/v1/'
     signUpEndpoint: 'accounts:signUp'
+
+grpc:
+  server:
+    port: 8071
+    security:
+      enabled: false
