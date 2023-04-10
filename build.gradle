@@ -8,6 +8,7 @@ plugins {
 }
 
 apply plugin: 'groovy'
+apply plugin: 'idea'
 
 group = 'app.groopy'
 version = 1.0
@@ -62,6 +63,7 @@ dependencies {
 	implementation group: 'io.grpc', name: 'protoc-gen-grpc-java', version: '1.54.0', ext: 'pom'
 
 	compileOnly 'org.projectlombok:lombok'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
 	testImplementation group: 'org.spockframework', name: 'spock-core', version: '2.4-M1-groovy-4.0'

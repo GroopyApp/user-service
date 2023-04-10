@@ -26,7 +26,7 @@ public class UserServiceGrpc extends app.groopy.protobuf.UserServiceGrpc.UserSer
 
     @Override
     public void signIn(UserServiceProto.SignInRequest request, StreamObserver<UserServiceProto.SignInResponse> responseObserver) {
-        LOGGER.info("Processing message {}", request);
+        LOGGER.info("Processing signIn message");
         UserServiceProto.SignInResponse response = presentationMapper.map(
                 signInService.perform(presentationMapper.map(request))
         );
@@ -37,7 +37,7 @@ public class UserServiceGrpc extends app.groopy.protobuf.UserServiceGrpc.UserSer
 
     @Override
     public void signUp(UserServiceProto.SignUpRequest request, StreamObserver<UserServiceProto.SignUpResponse> responseObserver) {
-        LOGGER.info("Processing message {}", request);
+        LOGGER.info("Processing signUp message");
         UserServiceProto.SignUpResponse response = presentationMapper.map(
                 signUpService.perform(presentationMapper.map(request))
         );
