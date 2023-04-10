@@ -19,4 +19,4 @@ grpc:
   server:
     port: 8071
     security:
-      enabled: true
+      enabled: false
