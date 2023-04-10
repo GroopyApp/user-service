@@ -8,11 +8,10 @@ VOLUME /tmp
 
 EXPOSE 8091
 
-
 RUN mkdir /app
 WORKDIR /app
 COPY . .
 RUN ./gradlew build
 
 
-ENTRYPOINT ["java","-jar","./build/libs/user-service-1.0.jar","--spring.config.location=classpath:/docker.yaml"]
+ENTRYPOINT ["java","-jar","./build/libs/user-service-1.0.jar","--spring.config.location=classpath:/docker.yaml", "-Dspring.profiles.active=prod"]

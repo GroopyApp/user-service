@@ -1,21 +1,13 @@
 server:
-  address: 0.0.0.0
   port: 8091
 spring:
-  application.name: room-service
-
-  kafka:
-    bootstrap-servers: kafka:9092
-#    producer:
-#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-#      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
-#    consumer:
-#      key-deserializer: org.apache.kafka.common.serialization.StringSerializer
-#      value-deserializer: app.groopy.userservice.infrastructure.kafka.UserServiceServiceKafkaDeserializer
+  application.name: user-service
 
 elasticsearch:
-  host: elasticsearch
+  host: groopy-db.es.us-central1.gcp.cloud.es.io:443
   port: 9200
+  username: elastic
+  password: W0ETCOArYU2DO5w4yTJSfK8n
 
 firebase:
   key: 'AIzaSyDWPGT6TyVUsc4v_3dsa8UrkPc725-ZXgc'
@@ -27,4 +19,4 @@ grpc:
   server:
     port: 8071
     security:
-      enabled: false
+      enabled: true

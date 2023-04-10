@@ -14,17 +14,13 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 @Configuration
 @EnableElasticsearchRepositories("app.groopy.providers.elasticsearch.repository")
 @ComponentScan(basePackages = {"app.groopy.providers.elasticsearch"})
-@Profile("!dev")
-public class ElasticsearchConfiguration extends AbstractElasticsearchConfiguration {
+@Profile("dev")
+public class ElasticsearchLocalConfiguration extends AbstractElasticsearchConfiguration {
 
     @Value("${elasticsearch.host}")
     private String host;
     @Value("${elasticsearch.port}")
     private String port;
-    @Value("${elasticsearch.username}")
-    private String username;
-    @Value("${elasticsearch.password}")
-    private String password;
 
     @Override
     @Bean
@@ -33,8 +29,6 @@ public class ElasticsearchConfiguration extends AbstractElasticsearchConfigurati
         final ClientConfiguration clientConfiguration =
                 ClientConfiguration.builder()
                         .connectedTo(host, port)
-                        .usingSsl()
-                        .withBasicAuth(username, password)
                         .build();
 
         return RestClients.create(clientConfiguration).rest();
