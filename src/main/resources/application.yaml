@@ -1,17 +1,5 @@
-server:
-  port: 8091
-  address: localhost
 spring:
   application.name: user-service
-
-  kafka:
-    bootstrap-servers: localhost:9092
-#    producer:
-#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-#      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
-#    consumer:
-#      key-deserializer: org.apache.kafka.common.serialization.StringSerializer
-#      value-deserializer: app.groopy.userservice.infrastructure.kafka.UserServiceServiceKafkaDeserializer
 
 elasticsearch:
   host: localhost

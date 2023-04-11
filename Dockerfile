@@ -14,4 +14,4 @@ COPY . .
 RUN ./gradlew build
 
 
-ENTRYPOINT ["java","-jar","./build/libs/user-service-1.0.jar","--spring.config.location=classpath:/docker.yaml", "-Dspring.profiles.active=prod"]
+ENTRYPOINT ["java","-jar","./build/libs/user-service-1.0.jar", "-spring.profiles.active=prod" ,"--spring.config.location=classpath:/docker.yaml"]
