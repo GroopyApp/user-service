@@ -4,8 +4,10 @@ spring:
   application.name: user-service
 
 elasticsearch:
-  host: 127.0.0.1
+  host: groopy-db.es.us-central1.gcp.cloud.es.io:443
   port: 9200
+  username: elastic
+  password: W0ETCOArYU2DO5w4yTJSfK8n
 
 firebase:
   key: 'AIzaSyDWPGT6TyVUsc4v_3dsa8UrkPc725-ZXgc'
