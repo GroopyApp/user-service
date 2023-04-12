@@ -4,7 +4,7 @@ spring:
   application.name: user-service
 
 elasticsearch:
-  host: 127.0.0.1
+  host: elasticsearch
   port: 9200
 
 firebase:

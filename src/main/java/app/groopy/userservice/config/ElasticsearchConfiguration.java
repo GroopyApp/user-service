@@ -21,10 +21,10 @@ public class ElasticsearchConfiguration extends AbstractElasticsearchConfigurati
     private String host;
     @Value("${elasticsearch.port}")
     private String port;
-    @Value("${elasticsearch.username}")
-    private String username;
-    @Value("${elasticsearch.password}")
-    private String password;
+//    @Value("${elasticsearch.username}")
+//    private String username;
+//    @Value("${elasticsearch.password}")
+//    private String password;
 
     @Override
     @Bean
@@ -33,8 +33,8 @@ public class ElasticsearchConfiguration extends AbstractElasticsearchConfigurati
         final ClientConfiguration clientConfiguration =
                 ClientConfiguration.builder()
                         .connectedTo(host, port)
-                        .usingSsl()
-                        .withBasicAuth(username, password)
+//                        .usingSsl()
+//                        .withBasicAuth(username, password)
                         .build();
 
         return RestClients.create(clientConfiguration).rest();
