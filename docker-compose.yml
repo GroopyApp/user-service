@@ -7,9 +7,9 @@ services:
         condition: service_healthy
     build: .
     ports:
-      - "8091:8091"
+      - "8071:8071"
     expose:
-      - '8091'
+      - '8071'
     networks:
       - infrastructure
 
@@ -47,7 +47,5 @@ networks:
     driver: bridge
 
 volumes:
-  #  cache:
-  #    driver: local
   elasticsearch-data:
     driver: local
