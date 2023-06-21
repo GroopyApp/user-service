@@ -1,9 +1,14 @@
 package app.groopy.userservice.domain.exceptions;
 
-import app.groopy.userservice.domain.models.SignUpRequestDto;
+import lombok.Getter;
 
-public class SignUpException extends Throwable {
-    public SignUpException(SignUpRequestDto request, String error) {
-        super(String.format("An error occurred registering the user: {%s} \n exception: {%s}", request, error));
+@Getter
+public class SignUpException extends Exception {
+
+    private final String identifier;
+
+    public SignUpException(String identifier) {
+        super(String.format("SignUp failed for user with username/email: %s", identifier));
+        this.identifier = identifier;
     }
 }

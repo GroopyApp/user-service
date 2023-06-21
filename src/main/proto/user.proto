@@ -1,4 +1,5 @@
 syntax = "proto3";
+
 package userservice;
 option java_package = "app.groopy.protobuf";
 option java_outer_classname = "UserServiceProto";
@@ -40,5 +41,5 @@ message UserDetails {
 }
 
 message ErrorResponse {
-  string error_message = 1;
+  map<string, string> parameters = 1;
 }

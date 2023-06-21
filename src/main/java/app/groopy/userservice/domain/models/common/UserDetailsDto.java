@@ -3,6 +3,8 @@ package app.groopy.userservice.domain.models.common;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDate;
+
 @Data
 @Builder
 public class UserDetailsDto {
@@ -11,4 +13,5 @@ public class UserDetailsDto {
     String surname;
     String email;
     String photoUrl;
+    LocalDate birthDate;
 }

@@ -1,9 +1,14 @@
 package app.groopy.userservice.domain.exceptions;
 
-import app.groopy.userservice.domain.models.SignInRequestDto;
+import lombok.Getter;
 
-public class SignInException extends Throwable {
-    public SignInException(SignInRequestDto request, String error) {
-        super(String.format("An error occurred trying to login: {%s}. \n exception: {%s}", request, error));
+@Getter
+public class SignInException extends Exception {
+
+    private final String identifier;
+
+    public SignInException(String identifier) {
+        super(String.format("Login failed for user with username/email: %s", identifier));
+        this.identifier = identifier;
     }
 }
