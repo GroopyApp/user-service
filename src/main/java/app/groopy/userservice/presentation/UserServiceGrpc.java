@@ -1,9 +1,10 @@
 package app.groopy.userservice.presentation;
 
 import app.groopy.protobuf.UserServiceProto;
-import app.groopy.userservice.application.SignInService;
-import app.groopy.userservice.application.SignUpService;
+import app.groopy.userservice.application.ApplicationService;
+import app.groopy.userservice.application.exceptions.ApplicationException;
 import app.groopy.userservice.presentation.mapper.PresentationMapper;
+import app.groopy.userservice.presentation.resolver.ApplicationExceptionResolver;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.slf4j.Logger;
@@ -16,32 +17,56 @@ public class UserServiceGrpc extends app.groopy.protobuf.UserServiceGrpc.UserSer
 
     private final Logger LOGGER = LoggerFactory.getLogger(UserServiceGrpc.class);
 
-    @Autowired
-    private SignInService signInService;
-    @Autowired
-    private SignUpService signUpService;
+    private final ApplicationService applicationService;
+    private final PresentationMapper presentationMapper;
 
     @Autowired
-    private PresentationMapper presentationMapper;
+    public UserServiceGrpc(ApplicationService applicationService, PresentationMapper presentationMapper) {
+        this.applicationService = applicationService;
+        this.presentationMapper = presentationMapper;
+    }
 
     @Override
     public void signIn(UserServiceProto.SignInRequest request, StreamObserver<UserServiceProto.SignInResponse> responseObserver) {
         LOGGER.info("Processing signIn message");
-        UserServiceProto.SignInResponse response = presentationMapper.map(
-                signInService.perform(presentationMapper.map(request))
-        );
+        try {
+            UserServiceProto.SignInResponse response = presentationMapper.map(
+                    applicationService.signIn(presentationMapper.map(request))
+            );
 
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (ApplicationException e) {
+            responseObserver.onError(ApplicationExceptionResolver.resolve(e));
+        }
     }
 
     @Override
     public void signUp(UserServiceProto.SignUpRequest request, StreamObserver<UserServiceProto.SignUpResponse> responseObserver) {
         LOGGER.info("Processing signUp message");
-        UserServiceProto.SignUpResponse response = presentationMapper.map(
-                signUpService.perform(presentationMapper.map(request))
-        );
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
+        try {
+            UserServiceProto.SignUpResponse response = presentationMapper.map(
+                    applicationService.signUp(presentationMapper.map(request))
+            );
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (ApplicationException e) {
+            responseObserver.onError(ApplicationExceptionResolver.resolve(e));
+        }
+    }
+
+    @Override
+    public void oAuth(UserServiceProto.OAuthRequest request, StreamObserver<UserServiceProto.SignInResponse> responseObserver) {
+        LOGGER.info("Processing oAuth message");
+        try {
+            UserServiceProto.SignInResponse response = presentationMapper.map(
+                    applicationService.oAuth(presentationMapper.map(request))
+            );
+
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (ApplicationException e) {
+            responseObserver.onError(ApplicationExceptionResolver.resolve(e));
+        }
     }
 }
