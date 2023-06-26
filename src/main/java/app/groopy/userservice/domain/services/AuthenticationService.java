@@ -4,10 +4,7 @@ import app.groopy.userservice.domain.exceptions.SignInException;
 import app.groopy.userservice.domain.exceptions.SignUpException;
 import app.groopy.userservice.domain.exceptions.UserNotFoundException;
 import app.groopy.userservice.domain.mapper.ProviderMapper;
-import app.groopy.userservice.domain.models.SignInRequestDto;
-import app.groopy.userservice.domain.models.SignInResponseDto;
-import app.groopy.userservice.domain.models.SignUpRequestDto;
-import app.groopy.userservice.domain.models.SignUpResponseDto;
+import app.groopy.userservice.domain.models.*;
 import app.groopy.userservice.domain.models.common.UserDetailsDto;
 import app.groopy.userservice.infrastructure.models.AuthenticationSignInResponse;
 import app.groopy.userservice.infrastructure.models.AuthenticationSignUpResponse;
@@ -50,9 +47,9 @@ public class AuthenticationService {
         UserEntity user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UserNotFoundException(request.getEmail()));
         try {
+            AuthenticationSignInResponse response = authenticationProvider.signIn(providerMapper.map(request));
             user.setLastLogin(LocalDateTime.now());
             userRepository.save(user);
-            AuthenticationSignInResponse response = authenticationProvider.signIn(providerMapper.map(request));
             return SignInResponseDto.builder()
                     .token(response.getToken())
                     .user(UserDetailsDto.builder()
@@ -60,7 +57,7 @@ public class AuthenticationService {
                             .name(user.getName())
                             .surname(user.getSurname())
                             .email(user.getEmail())
-                            .photoUrl(response.getUser().getPhotoUrl())
+                            .photoUrl(response.getAuthenticationUserResponse().getPhotoUrl())
                             .birthDate(user.getBirthDate())
                             .build())
                     .build();
@@ -68,6 +65,26 @@ public class AuthenticationService {
             LOGGER.error("An error occurred trying to login user: {}", request.getEmail(), e);
             throw new SignInException(request.getEmail());
         }
+    }
+
+    @SneakyThrows
+    public SignInResponseDto signInWithToken(OAuthRequestDto request) {
+        AuthenticationSignInResponse response = authenticationProvider.oauth(request.getToken(), request.getProvider());
+        UserEntity user = userRepository.findByEmail(response.getAuthenticationUserResponse().getEmail())
+                .orElseThrow(() -> new UserNotFoundException(response.getAuthenticationUserResponse().getEmail()));
+        user.setLastLogin(LocalDateTime.now());
+        userRepository.save(user);
+        return SignInResponseDto.builder()
+                .token(response.getToken())
+                .user(UserDetailsDto.builder()
+                        .userId(user.getUserId())
+                        .name(user.getName())
+                        .surname(user.getSurname())
+                        .email(user.getEmail())
+                        .photoUrl(response.getAuthenticationUserResponse().getPhotoUrl())
+                        .birthDate(user.getBirthDate())
+                        .build())
+                .build();
     }
 
     @SneakyThrows
@@ -100,7 +117,7 @@ public class AuthenticationService {
                             .name(user.getName())
                             .surname(user.getSurname())
                             .email(user.getEmail())
-                            .photoUrl(response.getUser().getPhotoUrl())
+                            .photoUrl(response.getAuthenticationUserResponse().getPhotoUrl())
                             .birthDate(user.getBirthDate())
                             .build())
                     .localId(response.getLocalId())

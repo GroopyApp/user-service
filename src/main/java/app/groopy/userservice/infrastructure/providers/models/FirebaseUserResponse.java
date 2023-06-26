@@ -5,8 +5,13 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UserDetails {
+public class FirebaseUserResponse {
     String userId;
     String email;
     String photoUrl;
+    String localId;
+    Boolean emailVerified;
+    String displayName;
+    String validSince;
+    Boolean disabled;
 }

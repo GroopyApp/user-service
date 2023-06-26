@@ -8,4 +8,5 @@ import app.groopy.userservice.infrastructure.models.AuthenticationSignUpResponse
 public interface AuthenticationProviderRepository {
     AuthenticationSignInResponse signIn(AuthenticationSignInRequest request);
     AuthenticationSignUpResponse signUp(AuthenticationSignUpRequest request);
+    AuthenticationSignInResponse oauth(String token, String provider);
 }

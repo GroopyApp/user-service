@@ -7,11 +7,17 @@ option java_outer_classname = "UserServiceProto";
 service UserService {
   rpc signIn (SignInRequest) returns (SignInResponse) {};
   rpc signUp (SignUpRequest) returns (SignUpResponse) {};
+  rpc oAuth(OAuthRequest) returns (SignInResponse) {};
 }
 
 message SignInRequest {
   string email = 1;
   string password = 2;
+}
+
+message OAuthRequest {
+  string token = 1;
+  string provider = 2;
 }
 
 message SignInResponse {
@@ -21,14 +27,21 @@ message SignInResponse {
 
 message SignUpRequest {
   string username = 1;
-  string email = 2;
-  string password = 3;
-  string photo_url = 4;
+  string name = 2;
+  string surname = 3;
+  string email = 4;
+  string password = 5;
+  string photo_url = 6;
+  string birth_date = 7;
+  string phone = 8;
+  string gender = 9;
+  string preferred_language = 10;
 }
 
 message SignUpResponse {
   UserDetails data = 1;
   string token = 2;
+  string local_id = 3;
 }
 
 message UserDetailsResponse {
@@ -37,7 +50,11 @@ message UserDetailsResponse {
 
 message UserDetails {
   string user_id = 1;
-  string email = 2;
+  string name = 2;
+  string surname = 3;
+  string email = 4;
+  string photo_url = 5;
+  string birth_date = 6;
 }
 
 message ErrorResponse {

@@ -7,10 +7,10 @@ import java.util.List;
 @Value
 public class FirebaseUserProfileResponse {
 
-    List<User> users;
+    List<ProviderUser> users;
 
     @Value
-    public static class User {
+    public static class ProviderUser {
         String localId;
         String email;
         Boolean emailVerified;

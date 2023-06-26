@@ -54,4 +54,19 @@ public class UserServiceGrpc extends app.groopy.protobuf.UserServiceGrpc.UserSer
             responseObserver.onError(ApplicationExceptionResolver.resolve(e));
         }
     }
+
+    @Override
+    public void oAuth(UserServiceProto.OAuthRequest request, StreamObserver<UserServiceProto.SignInResponse> responseObserver) {
+        LOGGER.info("Processing oAuth message");
+        try {
+            UserServiceProto.SignInResponse response = presentationMapper.map(
+                    applicationService.oAuth(presentationMapper.map(request))
+            );
+
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (ApplicationException e) {
+            responseObserver.onError(ApplicationExceptionResolver.resolve(e));
+        }
+    }
 }

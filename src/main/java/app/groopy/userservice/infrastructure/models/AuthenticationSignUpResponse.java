@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class AuthenticationSignUpResponse {
-    User user;
+    AuthenticationUserResponse authenticationUserResponse;
     String localId;
     String token;
 }

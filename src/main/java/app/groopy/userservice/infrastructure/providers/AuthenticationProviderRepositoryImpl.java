@@ -5,7 +5,7 @@ import app.groopy.userservice.infrastructure.models.AuthenticationSignInRequest;
 import app.groopy.userservice.infrastructure.models.AuthenticationSignInResponse;
 import app.groopy.userservice.infrastructure.models.AuthenticationSignUpRequest;
 import app.groopy.userservice.infrastructure.models.AuthenticationSignUpResponse;
-import app.groopy.userservice.infrastructure.models.User;
+import app.groopy.userservice.infrastructure.models.AuthenticationUserResponse;
 import app.groopy.userservice.infrastructure.providers.exception.AuthException;
 import app.groopy.userservice.infrastructure.providers.exception.FirebaseUserProfileException;
 import app.groopy.userservice.infrastructure.providers.models.*;
@@ -77,7 +77,8 @@ public class AuthenticationProviderRepositoryImpl implements AuthenticationProvi
         FirebaseUserDetailsResponse entity = getUserDetails(signInResponse.body().getIdToken());
 
         return AuthenticationSignInResponse.builder()
-                .user(User.builder()
+                .authenticationUserResponse(AuthenticationUserResponse.builder()
+                        .name(entity.getResponse().getDisplayName())
                         .email(entity.getResponse().getEmail())
                         .photoUrl(entity.getResponse().getPhotoUrl())
                         .build())
@@ -99,7 +100,7 @@ public class AuthenticationProviderRepositoryImpl implements AuthenticationProvi
         try {
             FirebaseUserDetailsResponse entity = updateUserDetails(signUpResponse.body().getIdToken(), request.getUsername(), request.getPhotoUrl());
             return AuthenticationSignUpResponse.builder()
-                    .user(User.builder()
+                    .authenticationUserResponse(AuthenticationUserResponse.builder()
                             .email(entity.getResponse().getEmail())
                             .photoUrl(entity.getResponse().getPhotoUrl())
                             .build())
@@ -110,6 +111,28 @@ public class AuthenticationProviderRepositoryImpl implements AuthenticationProvi
             deleteUser(signUpResponse.body().getLocalId());
             throw ex;
         }
+    }
+
+    @SneakyThrows
+    public AuthenticationSignInResponse oauth(String token, String provider) {
+        String postBody = String.format("id_token=[%s]&providerId=[%s]", token, provider);
+        Response<FirebaseOAuthResponse> signUpResponse = firebaseRepository.oauth(FirebaseOAuthRequest.builder()
+                        .requestUri("")
+                        .postBody(postBody)
+                        .returnIdpCredential(true)
+                        .returnSecureToken(true)
+                .build()).execute();
+        if (!signUpResponse.isSuccessful()) {
+            throw new AuthException(signUpResponse.errorBody() != null ? signUpResponse.errorBody().toString() : "Unknown error");
+        }
+        return AuthenticationSignInResponse.builder()
+                .authenticationUserResponse(AuthenticationUserResponse.builder()
+                        .email(signUpResponse.body().getEmail())
+                        .name(signUpResponse.body().getDisplayName())
+                        .photoUrl(signUpResponse.body().getPhotoUrl())
+                        .build())
+                .token(signUpResponse.body().getIdToken())
+                .build();
     }
 
     public void deleteUser(String uid) {
@@ -143,14 +166,18 @@ public class AuthenticationProviderRepositoryImpl implements AuthenticationProvi
             throw new FirebaseUserProfileException("User details not found");
         }
 
-        FirebaseUserProfileResponse.User entity = lookupProfileResponse.body().getUsers().get(0);
+        FirebaseUserProfileResponse.ProviderUser entity = lookupProfileResponse.body().getUsers().get(0);
 
         return FirebaseUserDetailsResponse.builder()
-                .response(UserDetails.builder()
-                                .userId(entity.getDisplayName())
-                                .email(entity.getEmail())
-                        //TODO add other fields
-                                .build())
+                .response(FirebaseUserResponse.builder()
+                        .displayName(entity.getDisplayName())
+                        .userId(entity.getLocalId())
+                        .disabled(entity.getDisabled())
+                        .photoUrl(entity.getPhotoUrl())
+                        .email(entity.getEmail())
+                        .emailVerified(entity.getEmailVerified())
+                        .validSince(entity.getValidSince())
+                        .build())
                 .token(firebaseInstance.createCustomToken(decodedToken.getUid()))
                 .build();
     }
@@ -172,10 +199,10 @@ public class AuthenticationProviderRepositoryImpl implements AuthenticationProvi
         FirebaseUpdateProfileResponse entity = updateProfileResponse.body();
 
         return FirebaseUserDetailsResponse.builder()
-                .response(UserDetails.builder()
+                .response(FirebaseUserResponse.builder()
                         .userId(entity.getDisplayName())
                         .email(entity.getEmail())
-                        //TODO add other fields
+                        .photoUrl(entity.getPhotoUrl())
                         .build())
                 .token(firebaseInstance.createCustomToken(decodedToken.getUid()))
                 .build();

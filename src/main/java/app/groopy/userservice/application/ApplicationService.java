@@ -1,10 +1,7 @@
 package app.groopy.userservice.application;
 
 import app.groopy.userservice.application.exceptions.ApplicationException;
-import app.groopy.userservice.domain.models.SignInRequestDto;
-import app.groopy.userservice.domain.models.SignInResponseDto;
-import app.groopy.userservice.domain.models.SignUpRequestDto;
-import app.groopy.userservice.domain.models.SignUpResponseDto;
+import app.groopy.userservice.domain.models.*;
 import app.groopy.userservice.domain.services.AuthenticationService;
 import app.groopy.userservice.domain.resolver.DomainExceptionResolver;
 import org.slf4j.Logger;
@@ -27,10 +24,7 @@ public class ApplicationService {
 
     public SignInResponseDto signIn(SignInRequestDto request) throws ApplicationException {
         try {
-            var result = authenticationService.signIn(request);
-            //TODO: add log here
-            LOGGER.info("add log here {}", result);
-            return result;
+            return authenticationService.signIn(request);
         } catch (Exception e) {
             LOGGER.error(String.format("an error occurred trying to login user with email %s", request.getEmail()), e);
             throw DomainExceptionResolver.resolve(e);
@@ -39,12 +33,19 @@ public class ApplicationService {
 
     public SignUpResponseDto signUp(SignUpRequestDto request) throws ApplicationException {
         try {
-            var result = authenticationService.signUp(request);
-            //TODO: add log here
-            LOGGER.info("add log here {}", result);
-            return result;
+            return authenticationService.signUp(request);
         } catch (Exception e) {
             LOGGER.error(String.format("an error occurred trying to register user with email %s", request.getEmail()), e);
+            throw DomainExceptionResolver.resolve(e);
+        }
+    }
+
+    public SignInResponseDto oAuth(OAuthRequestDto request) throws ApplicationException {
+        try {
+            return authenticationService.signInWithToken(request);
+        } catch (Exception e) {
+            LOGGER.error(String.format("an error occurred trying to login user with OAuth token: %s and provider: %s",
+                    request.getToken(), request.getProvider()), e);
             throw DomainExceptionResolver.resolve(e);
         }
     }
