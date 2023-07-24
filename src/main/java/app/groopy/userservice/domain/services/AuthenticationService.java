@@ -100,6 +100,7 @@ public class AuthenticationService {
                             .userId(request.getUsername())
                             .name(request.getName())
                             .surname(request.getSurname())
+                            .photoUrl(request.getPhotoUrl())
                             .phone(request.getPhone())
                     .build());
 

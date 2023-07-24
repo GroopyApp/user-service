@@ -23,5 +23,6 @@ public class UserEntity extends Entity {
     private String phone;
     private String gender;
     private String language;
+    private String photoUrl;
     private LocalDateTime lastLogin;
 }
