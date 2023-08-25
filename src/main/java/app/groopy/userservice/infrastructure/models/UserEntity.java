@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @SuperBuilder
@@ -24,4 +25,6 @@ public class UserEntity extends Entity {
     private String gender;
     private String language;
     private LocalDateTime lastLogin;
+    private List<String> subscribedTopics;
+    private List<String> subscribedEvents;
 }

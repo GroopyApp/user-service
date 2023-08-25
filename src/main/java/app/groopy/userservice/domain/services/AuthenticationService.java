@@ -59,6 +59,8 @@ public class AuthenticationService {
                             .email(user.getEmail())
                             .photoUrl(response.getAuthenticationUserResponse().getPhotoUrl())
                             .birthDate(user.getBirthDate())
+                            .subscribedTopics(user.getSubscribedTopics())
+                            .subscribedEvents(user.getSubscribedEvents())
                             .build())
                     .build();
         } catch (Exception e) {
