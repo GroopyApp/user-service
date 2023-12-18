@@ -44,13 +44,8 @@ public class AuthenticationProviderRepositoryImpl implements AuthenticationProvi
     @SneakyThrows
     @Autowired
     public AuthenticationProviderRepositoryImpl(@Value("${firebase.authentication.host}") String firebaseHost) {
-        InputStream in = new ClassPathResource("groopy-9356d-firebase-adminsdk-iszyf-91b95d0922.json").getInputStream();
 
-        FirebaseOptions options = new FirebaseOptions.Builder()
-                .setCredentials(GoogleCredentials.fromStream(in))
-                .build();
-
-        FirebaseApp.initializeApp(options);
+        FirebaseApp.initializeApp();
 
         firebaseInstance = FirebaseAuth.getInstance();
 
