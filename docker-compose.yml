@@ -1,6 +1,5 @@
-version: '2.1'
+version: '3.8'
 services:
-
   user-service:
     depends_on:
       elasticsearch:
@@ -12,6 +11,14 @@ services:
       - '8071'
     networks:
       - infrastructure
+    volumes:
+      - type: bind
+        source: ./secrets
+        target: /secrets
+    environment:
+      - DOCKER_DEFAULT_PLATFORM=linux/amd64/v3
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - GOOGLE_APPLICATION_CREDENTIALS=/secrets/groopy-auth.json
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.5
