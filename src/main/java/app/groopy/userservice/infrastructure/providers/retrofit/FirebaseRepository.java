@@ -14,7 +14,6 @@ public interface FirebaseRepository {
     String SIGN_IN_ENDPOINT = "./accounts:signInWithPassword" + KEY_APPENDER;
     String SIGN_UP_ENDPOINT = "./accounts:signUp" + KEY_APPENDER;
     String OAUTH_SIGN_IN_ENDPOINT = "./accounts:signInWithIdp" + KEY_APPENDER;
-
     String LOOKUP_PROFILE_ENDPOINT = "./accounts:lookup" + KEY_APPENDER;
     String UPDATE_PROFILE_ENDPOINT = "./accounts:update" + KEY_APPENDER;
 
