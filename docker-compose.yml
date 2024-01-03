@@ -13,7 +13,7 @@ services:
         source: ./secrets
         target: /secrets
     environment:
-      MONGO_DB_URI: mongodb://root:root@localhost:27017/groopy
+      MONGO_DB_URI: mongodb://root:root@localhost:27017/groopy?authSource=admin
       DOCKER_DEFAULT_PLATFORM: linux/amd64/v3
       GOOGLE_APPLICATION_CREDENTIALS: /secrets/groopy-auth.json
       ES_JAVA_OPTS: -Xms512m -Xmx512m
