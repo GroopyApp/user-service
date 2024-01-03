@@ -11,9 +11,7 @@ import app.groopy.userservice.infrastructure.providers.exception.FirebaseUserPro
 import app.groopy.userservice.infrastructure.providers.models.*;
 import app.groopy.userservice.infrastructure.providers.retrofit.FirebaseRepository;
 import app.groopy.userservice.infrastructure.repository.AuthenticationProviderRepository;
-import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.ListUsersPage;
@@ -23,13 +21,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import java.io.InputStream;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -43,7 +39,7 @@ public class AuthenticationProviderRepositoryImpl implements AuthenticationProvi
 
     @SneakyThrows
     @Autowired
-    public AuthenticationProviderRepositoryImpl(@Value("${firebase.authentication.host}") String firebaseHost) {
+    public AuthenticationProviderRepositoryImpl(@Value("${firebase.host}") String firebaseHost) {
 
         FirebaseApp.initializeApp();
 

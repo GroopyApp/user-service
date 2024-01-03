@@ -2,12 +2,11 @@ spring:
   application.name: user-service
   data:
     mongodb:
-      uri: mongodb+srv://${MONGO_USER}:${MONGO_PWD}@${MONGO_DB_HOST}/${MONGO_HUB}?retryWrites=true&w=majority
+      uri: ${MONGO_DB_URI}
 
 firebase:
-  key: ${FIREBASE_API_KEY}
-  authentication:
-    host: 'https://identitytoolkit.googleapis.com/v1/'
+  api-key: ${FIREBASE_API_KEY}
+  host: 'https://identitytoolkit.googleapis.com/v1/'
 
 grpc:
   server:

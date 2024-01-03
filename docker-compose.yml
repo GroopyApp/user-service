@@ -1,14 +1,11 @@
 version: '3.8'
 services:
   user-service:
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
     build: .
     ports:
-      - "8071:8071"
+      - "8072:8072"
     expose:
-      - '8071'
+      - '8072'
     networks:
       - infrastructure
     volumes:
@@ -16,43 +13,24 @@ services:
         source: ./secrets
         target: /secrets
     environment:
-      - DOCKER_DEFAULT_PLATFORM=linux/amd64/v3
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
-      - GOOGLE_APPLICATION_CREDENTIALS=/secrets/groopy-auth.json
-
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.5
+      MONGO_DB_URI: mongodb://root:root@localhost:27017/groopy
+      DOCKER_DEFAULT_PLATFORM: linux/amd64/v3
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+      GOOGLE_APPLICATION_CREDENTIALS: /secrets/groopy-auth.json
+  mongodb_container:
+    image: mongo:latest
+    container_name: mongodb
     environment:
-      - xpack.security.enabled=false
-      - discovery.type=single-node
-      - bootstrap.memory_lock=false
-      - ES_JAVA_OPTS=-Xms1024m -Xmx1024m
-      - xpack.monitoring.collection.enabled=false
-      - xpack.monitoring.elasticsearch.collection.enabled=false
-      - xpack.ml.enabled=true
-      - xpack.graph.enabled=true
-      - xpack.watcher.enabled=true
-      - number_of_replicas=0
-      - xpack.monitoring.collection.indices=document, user
-      - SPRING_DATA_JEST_URI=http://docy-elasticsearch:9200/
-    volumes:
-      - elasticsearch-data:/usr/share/elasticsearch/data
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
     ports:
-      - 9200:9200
-    expose:
-      - 9200
-    networks:
-      - infrastructure
-    healthcheck:
-      test: curl -u elastic:elastic -s -f elasticsearch:9200/_cat/health >/dev/null || exit 1
-      interval: 30s
-      timeout: 10s
-      retries: 5
+      - 27017:27017
+    volumes:
+      - mongodb_data_container:/data/db
 
 networks:
   infrastructure:
     driver: bridge
 
 volumes:
-  elasticsearch-data:
-    driver: local
+  mongodb_data_container:

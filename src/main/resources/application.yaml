@@ -2,12 +2,12 @@ spring:
   application.name: user-service
   data:
     mongodb:
-      uri: mongodb+srv://root:root@localhost/?authMechanism=DEFAULT&authSource=expat-db?retryWrites=true&w=majority
+      uri: ${MONGO_DB_URI}
 
 firebase:
-  key: ${FIREBASE_API_KEY}
-  authentication:
-    host: 'https://identitytoolkit.googleapis.com/v1/'
+  api-key: ${FIREBASE_API_KEY}
+  host: 'https://identitytoolkit.googleapis.com/v1/'
+
 grpc:
   server:
     port: 8071
