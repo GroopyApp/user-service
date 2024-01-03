@@ -1,34 +1,37 @@
 package app.groopy.userservice.infrastructure.providers.retrofit;
 
 import app.groopy.userservice.infrastructure.providers.models.*;
+import org.springframework.stereotype.Repository;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
+@Repository
 public interface FirebaseRepository {
-
-    //FIXME find a way to use @Value to fetch from properties file
-    String FIREBASE_KEY = "AIzaSyDWPGT6TyVUsc4v_3dsa8UrkPc725-ZXgc";
-    String KEY_APPENDER = "?key=" + FIREBASE_KEY;
-
-    String SIGN_IN_ENDPOINT = "./accounts:signInWithPassword" + KEY_APPENDER;
-    String SIGN_UP_ENDPOINT = "./accounts:signUp" + KEY_APPENDER;
-    String OAUTH_SIGN_IN_ENDPOINT = "./accounts:signInWithIdp" + KEY_APPENDER;
-    String LOOKUP_PROFILE_ENDPOINT = "./accounts:lookup" + KEY_APPENDER;
-    String UPDATE_PROFILE_ENDPOINT = "./accounts:update" + KEY_APPENDER;
+    String SIGN_IN_ENDPOINT = "./accounts:signInWithPassword";
+    String SIGN_UP_ENDPOINT = "./accounts:signUp";
+    String OAUTH_SIGN_IN_ENDPOINT = "./accounts:signInWithIdp";
+    String LOOKUP_PROFILE_ENDPOINT = "./accounts:lookup";
+    String UPDATE_PROFILE_ENDPOINT = "./accounts:update";
 
     @POST(SIGN_IN_ENDPOINT)
-    Call<FirebaseSignInResponse> signIn(@Body FirebaseSignInRequest request);
+    Call<FirebaseSignInResponse> signIn(@Query("key") String apiKey,
+                                        @Body FirebaseSignInRequest request);
 
     @POST(OAUTH_SIGN_IN_ENDPOINT)
-    Call<FirebaseOAuthResponse> oauth(@Body FirebaseOAuthRequest request);
+    Call<FirebaseOAuthResponse> oauth(@Query("key") String apiKey,
+                                      @Body FirebaseOAuthRequest request);
 
     @POST(SIGN_UP_ENDPOINT)
-    Call<FirebaseSignUpResponse> signUp(@Body FirebaseSignUpRequest request);
+    Call<FirebaseSignUpResponse> signUp(@Query("key") String apiKey,
+                                        @Body FirebaseSignUpRequest request);
 
     @POST(LOOKUP_PROFILE_ENDPOINT)
-    Call<FirebaseUserProfileResponse> lookupProfile(@Body FirebaseUserProfileRequest request);
+    Call<FirebaseUserProfileResponse> lookupProfile(@Query("key") String apiKey,
+                                                    @Body FirebaseUserProfileRequest request);
 
     @POST(UPDATE_PROFILE_ENDPOINT)
-    Call<FirebaseUpdateProfileResponse> updateProfile(@Body FirebaseUpdateProfileRequest request);
+    Call<FirebaseUpdateProfileResponse> updateProfile(@Query("key") String apiKey,
+                                                      @Body FirebaseUpdateProfileRequest request);
 }

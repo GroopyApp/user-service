@@ -32,6 +32,8 @@ import java.util.stream.StreamSupport;
 @Service
 public class AuthenticationProviderRepositoryImpl implements AuthenticationProviderRepository {
 
+    @Value("${firebase.api-key}")
+    private String API_KEY;
     private final Logger LOGGER = LoggerFactory.getLogger(AuthenticationProviderRepositoryImpl.class);
 
     FirebaseAuth firebaseInstance;
@@ -55,7 +57,8 @@ public class AuthenticationProviderRepositoryImpl implements AuthenticationProvi
 
     @SneakyThrows
     public AuthenticationSignInResponse signIn(AuthenticationSignInRequest request) {
-        Response<FirebaseSignInResponse> signInResponse = firebaseRepository.signIn(FirebaseSignInRequest.builder()
+        Response<FirebaseSignInResponse> signInResponse = firebaseRepository.signIn(API_KEY,
+                FirebaseSignInRequest.builder()
                 .email(request.getEmail())
                 .password(request.getPassword())
                 .returnSecureToken(true)
@@ -79,7 +82,8 @@ public class AuthenticationProviderRepositoryImpl implements AuthenticationProvi
 
     @SneakyThrows
     public AuthenticationSignUpResponse signUp(AuthenticationSignUpRequest request) {
-        Response<FirebaseSignUpResponse> signUpResponse = firebaseRepository.signUp(FirebaseSignUpRequest.builder()
+        Response<FirebaseSignUpResponse> signUpResponse = firebaseRepository.signUp(API_KEY,
+                FirebaseSignUpRequest.builder()
                         .email(request.getEmail())
                         .password(request.getPassword())
                         .returnSecureToken(true)
@@ -107,7 +111,8 @@ public class AuthenticationProviderRepositoryImpl implements AuthenticationProvi
     @SneakyThrows
     public AuthenticationSignInResponse oauth(String token, String provider) {
         String postBody = String.format("id_token=[%s]&providerId=[%s]", token, provider);
-        Response<FirebaseOAuthResponse> signUpResponse = firebaseRepository.oauth(FirebaseOAuthRequest.builder()
+        Response<FirebaseOAuthResponse> signUpResponse = firebaseRepository.oauth(API_KEY,
+                FirebaseOAuthRequest.builder()
                         .requestUri("")
                         .postBody(postBody)
                         .returnIdpCredential(true)
@@ -143,7 +148,8 @@ public class AuthenticationProviderRepositoryImpl implements AuthenticationProvi
 
     @SneakyThrows
     private FirebaseUserDetailsResponse getUserDetails(String idToken) {
-        Response<FirebaseUserProfileResponse> lookupProfileResponse = firebaseRepository.lookupProfile(FirebaseUserProfileRequest.builder()
+        Response<FirebaseUserProfileResponse> lookupProfileResponse = firebaseRepository.lookupProfile(API_KEY,
+                FirebaseUserProfileRequest.builder()
                 .idToken(idToken)
                 .build()).execute();
 
@@ -175,7 +181,8 @@ public class AuthenticationProviderRepositoryImpl implements AuthenticationProvi
 
     @SneakyThrows
     private FirebaseUserDetailsResponse updateUserDetails(String idToken, String username, String photoUrl) throws FirebaseUserProfileException {
-        Response<FirebaseUpdateProfileResponse> updateProfileResponse = firebaseRepository.updateProfile(FirebaseUpdateProfileRequest.builder()
+        Response<FirebaseUpdateProfileResponse> updateProfileResponse = firebaseRepository.updateProfile(API_KEY,
+                FirebaseUpdateProfileRequest.builder()
                 .idToken(idToken)
                 .returnSecureToken(true)
                 .displayName(username)

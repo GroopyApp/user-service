@@ -15,8 +15,8 @@ services:
     environment:
       MONGO_DB_URI: mongodb://root:root@localhost:27017/groopy
       DOCKER_DEFAULT_PLATFORM: linux/amd64/v3
-      ES_JAVA_OPTS: -Xms512m -Xmx512m
       GOOGLE_APPLICATION_CREDENTIALS: /secrets/groopy-auth.json
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
   mongodb_container:
     image: mongo:latest
     container_name: mongodb
